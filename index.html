@@ -889,11 +889,20 @@ function markRecent(id){
 function toggleFav(id){
   const i = S.favs.indexOf(id);
   if(i===-1){ S.favs.push(id); toast(t('fav_add')); }
-  else	   { S.favs.splice(i,1); toast(t('fav_rm')); }
+  else      { S.favs.splice(i,1); toast(t('fav_rm')); }
   saveFavs();
-  renderAll();
+
+  // تەنها دوگمەی هەارتەکە بگۆڕە بەبێ ریفرێش
+  document.querySelectorAll(`[data-fav="${id}"]`).forEach(btn=>{
+    const on = S.favs.includes(id);
+    btn.classList.toggle('on', on);
+    btn.setAttribute('aria-pressed', String(on));
+  });
+
+  renderSide();
   if(S.openId===id) syncModalFav();
 }
+
 
 /* ════════════════════════════════════════════════════════════════
    6. TOAST
