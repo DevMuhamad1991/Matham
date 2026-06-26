@@ -154,53 +154,6 @@ body.lang-ar  .nav-brand{font-family:'Noto Naskh Arabic','Cormorant Garamond',se
 .si-clear.on{opacity:1;pointer-events:auto}
 
 /* ═══════════════════════════════════════════════════════════════
-   HERO STRIP
-═══════════════════════════════════════════════════════════════ */
-.hero{
-  padding:28px 16px 20px;
-  text-align:center;
-  position:relative;overflow:hidden;
-}
-.hero::after{
-  content:'';
-  position:absolute;top:-80px;left:50%;transform:translateX(-50%);
-  width:500px;height:500px;
-  background:radial-gradient(circle,rgba(212,175,55,.07) 0%,transparent 68%);
-  pointer-events:none;
-}
-.hero-eyebrow{
-  display:inline-flex;align-items:center;gap:7px;
-  background:rgba(212,175,55,.1);
-  border:1px solid rgba(212,175,55,.28);
-  color:var(--gold);
-  font-size:11px;letter-spacing:1.4px;text-transform:uppercase;
-  padding:5px 16px;border-radius:99px;
-  margin-bottom:14px;
-}
-.hero-eyebrow i{font-size:10px}
-.hero-title{
-  font-family:var(--font-display);
-  font-size:clamp(30px,8vw,52px);
-  font-weight:700;color:var(--cream);
-  line-height:1.12;
-  margin-bottom:6px;
-  position:relative;display:inline-block;
-}
-body.lang-ckb .hero-title,
-body.lang-ar  .hero-title{font-family:'Noto Naskh Arabic','Cormorant Garamond',serif}
-/* gold shimmer underline — the signature */
-.hero-title::after{
-  content:'';
-  position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);
-  height:2px;width:55%;
-  background:linear-gradient(90deg,transparent,var(--gold),transparent);
-  border-radius:99px;
-  animation:goldLine 3.5s ease-in-out infinite;
-}
-@keyframes goldLine{0%,100%{opacity:.4;width:38%}50%{opacity:1;width:68%}}
-.hero-sub{margin-top:14px;color:var(--muted);font-size:13.5px}
-
-/* ═══════════════════════════════════════════════════════════════
    CATEGORY SLIDER  — image-tile style like the reference
 ═══════════════════════════════════════════════════════════════ */
 .cats-wrap{padding:4px 0 20px;position:relative}
@@ -663,15 +616,6 @@ body.lang-ar  .modal-name{font-family:'Noto Naskh Arabic','Cormorant Garamond',s
 
 <main>
 
-<!-- ════════════════ HERO ════════════════ -->
-<section class="hero">
-  <div class="hero-eyebrow">
-	<i class="fa-solid fa-star" aria-hidden="true"></i>
-	<span data-i18n="hero_badge">مێنووی دیجیتاڵ</span>
-  </div>
-  <h1 class="hero-title" data-i18n="brand">ئاراش فاست فوود</h1>
-  <p class="hero-sub" data-i18n="hero_sub">خواردنی باش، ئەمڕۆ</p>
-</section>
 
 <!-- ════════════════ CATEGORIES ════════════════ -->
 <section class="cats-wrap" aria-label="Categories">
@@ -776,8 +720,6 @@ body.lang-ar  .modal-name{font-family:'Noto Naskh Arabic','Cormorant Garamond',s
 const I18N = {
   ckb:{
 	brand:'ئاراش فاست فوود',
-	hero_badge:'مێنووی دیجیتاڵ',
-	hero_sub:'خواردنی باش، ئەمڕۆ',
 	search_ph:'گەڕان...',
 	favorites:'دڵخوازەکان',
 	recently_viewed:'دوا بینراوەکان',
@@ -798,8 +740,6 @@ const I18N = {
   },
   ar:{
 	brand:'آراش فاست فود',
-	hero_badge:'قائمة رقمية',
-	hero_sub:'طعام لذيذ، اليوم',
 	search_ph:'بحث...',
 	favorites:'المفضلة',
 	recently_viewed:'شوهد مؤخراً',
@@ -820,8 +760,6 @@ const I18N = {
   },
   en:{
 	brand:'Arash Fast Food',
-	hero_badge:'Digital Menu',
-	hero_sub:'Good food, today',
 	search_ph:'Search...',
 	favorites:'Favorites',
 	recently_viewed:'Recently Viewed',
