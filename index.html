@@ -892,6 +892,69 @@
 	============================================= */
 	html[dir="ltr"] .search-bar__input { padding: 10px 16px 10px 44px; }
 	html[dir="ltr"] .search-bar__icon { inset-inline-end: auto; inset-inline-start: 14px; }
+  
+  .lang-picker-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--clr-overlay);
+  backdrop-filter: blur(8px);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lang-picker {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-xl);
+  padding: 36px 28px;
+  width: 90%;
+  max-width: 360px;
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+}
+
+.lang-picker__title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--clr-text);
+  margin-bottom: 6px;
+}
+
+.lang-picker__sub {
+  font-size: 0.85rem;
+  color: var(--clr-muted);
+  margin-bottom: 28px;
+}
+
+.lang-picker__btns {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lang-picker__btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 20px;
+  border-radius: var(--radius-md);
+  background: var(--clr-card);
+  border: 1px solid var(--clr-border);
+  font-size: 1rem;
+  color: var(--clr-text);
+  transition: all var(--transition);
+}
+
+.lang-picker__btn:hover {
+  border-color: var(--clr-accent);
+  color: var(--clr-accent);
+  background: var(--clr-primary);
+}
+
+.lang-picker__btn .flag { font-size: 1.4rem; }
+
   </style>
 </head>
 <body>
@@ -1020,7 +1083,7 @@
   <div id="recentSection" style="display:none;">
 	<div class="section-header">
 	  <div class="section-header__line"></div>
-	  <span class="section-header__title" data-i18n="recently_viewed">کۆتا بینراوەکان</span>
+	  <span class="section-header__title" data-i18n="recently_viewed"> بینراوەکان</span>
 	  <div class="section-header__line"></div>
 	</div>
 	<div class="extras-section">
@@ -1109,6 +1172,29 @@
 	  </div>
 	</div>
   </div>
+  
+  <!-- LANGUAGE PICKER MODAL -->
+<div class="lang-picker-overlay" id="langPickerOverlay">
+  <div class="lang-picker">
+    <h2 class="lang-picker__title">زمانی دڵخواز هەڵبژێرە</h2>
+    <p class="lang-picker__sub">Choose your language</p>
+    <div class="lang-picker__btns">
+      <button class="lang-picker__btn" data-lang="ckb" data-dir="rtl">
+        <span class="flag">🇮🇶</span>
+        <span>کوردی (سۆرانی)</span>
+      </button>
+      <button class="lang-picker__btn" data-lang="ar" data-dir="rtl">
+        <span class="flag">🇸🇦</span>
+        <span>العربية</span>
+      </button>
+      <button class="lang-picker__btn" data-lang="en" data-dir="ltr">
+        <span class="flag">🇬🇧</span>
+        <span>English</span>
+      </button>
+    </div>
+  </div>
+</div>
+
 
   <!-- ============================================
 	   JAVASCRIPT
@@ -1599,6 +1685,18 @@
 	 14. INIT
   ================================================ */
   function init() {
+    // Show language picker if no language saved
+if (!localStorage.getItem('arash_lang')) {
+  document.getElementById('langPickerOverlay').style.display = 'flex';
+}
+
+document.querySelectorAll('.lang-picker__btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    setLanguage(btn.dataset.lang, btn.dataset.dir);
+    localStorage.setItem('arash_lang', btn.dataset.lang);
+    document.getElementById('langPickerOverlay').style.display = 'none';
+  });
+});
 	applyTranslations();
 	renderMeals();
 	renderFavorites();
