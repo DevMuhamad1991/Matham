@@ -1237,26 +1237,25 @@
       <div class="modal__drag"></div>
       
       <!-- ناوی خواردنگە -->
-      <h2 class="modal__name">Arash Fast Food</h2>
+<h2 class="modal__name" data-i18n="about_title"></h2>
+
       
       <!-- دەق -->
-      <p class="modal__desc">
-        لە ٢٠١٥ەوە خزمەتتان دەکەین لە هەولێر...
-      </p>
+     <p class="modal__desc" data-i18n="about_desc"></p>
       
       <!-- ئەستاتیستیک -->
       <div class="about-stats">
         <div class="about-stat">
           <span class="about-stat__num">١٠</span>
-          <span class="about-stat__label">ساڵ</span>
+<span class="about-stat__label" data-i18n="about_years"></span>
         </div>
         <div class="about-stat">
           <span class="about-stat__num">٢٠+</span>
-          <span class="about-stat__label">خواردن</span>
+<span class="about-stat__label" data-i18n="about_meals"></span>
         </div>
         <div class="about-stat">
-          <span class="about-stat__num">📍</span>
-          <span class="about-stat__label">هەولێر</span>
+<i class="fa-solid fa-location-dot" style="color: var(--clr-accent); font-size: 1.4rem;"></i>
+<span class="about-stat__label" data-i18n="about_city"></span>
         </div>
       </div>
       
@@ -1264,7 +1263,8 @@
       <div class="modal__footer">
         <button class="modal__fav-btn" id="aboutClose">
           <i class="fa-solid fa-xmark"></i>
-          <span>داخستن</span>
+<span data-i18n="about_close"></span>
+
         </button>
       </div>
       
@@ -1373,6 +1373,7 @@
 	  price: '7,500 IQD',
 	  tags: { ckb: ['تازە', 'گرم'], ar: ['طازج', 'ساخن'], en: ['Fresh', 'Hot'] },
 	  name:  { ckb: 'بەرگەری کلاسیک',	ar: 'برجر كلاسيك',	   en: 'Classic Burger' },
+    desc: { ckb: '', ar: 'لحم طازج، جبن، طماطم', en: 'Fresh beef, cheese, tomato' },
 	},
 	{
 	  id: 2,
@@ -1464,7 +1465,6 @@ recentlyViewed: [],
 	  const q = state.searchQuery.trim().toLowerCase();
 	  const matchQ = !q
 		|| ml(m.name).toLowerCase().includes(q)
-		|| ml(m.desc).toLowerCase().includes(q);
 	  return matchCat && matchQ;
 	});
   }
@@ -1501,7 +1501,6 @@ recentlyViewed: [],
 		<div class="meal-card__body">
 		  <span class="meal-card__cat-badge">${t('cat_' + meal.category)}</span>
 		  <h3 class="meal-card__name">${ml(meal.name)}</h3>
-		  <p class="meal-card__desc">${ml(meal.desc)}</p>
 		  <span class="meal-card__price">${meal.price}</span>
 		</div>
 	  `;
