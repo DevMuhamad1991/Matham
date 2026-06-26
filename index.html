@@ -955,6 +955,33 @@
 
 .lang-picker__btn .flag { font-size: 1.4rem; }
 
+.about-stats {
+  display: flex;
+  justify-content: space-around;
+  padding: 20px 0;
+  border-top: 1px solid var(--clr-border);
+  border-bottom: 1px solid var(--clr-border);
+  margin-bottom: 20px;
+}
+
+.about-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.about-stat__num {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--clr-accent);
+}
+
+.about-stat__label {
+  font-size: 0.8rem;
+  color: var(--clr-muted);
+}
+
   </style>
 </head>
 <body>
@@ -977,6 +1004,11 @@
 	</a>
 
 	<div class="navbar__actions">
+    
+    <button class="btn-icon" id="aboutToggle" aria-label="About">
+  <i class="fa-solid fa-store"></i>
+</button>
+
 	  <!-- Search toggle -->
 	  <button class="btn-icon" id="searchToggle" aria-label="Search">
 		<i class="fa-solid fa-magnifying-glass"></i>
@@ -1195,6 +1227,51 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="aboutOverlay">
+  <div class="modal" id="aboutModal">
+    
+    <!-- وێنەی خواردنگە -->
+    <img class="modal__img" src="وێنەکەت لێرە" alt="Arash Fast Food" />
+    
+    <div class="modal__body">
+      <div class="modal__drag"></div>
+      
+      <!-- ناوی خواردنگە -->
+      <h2 class="modal__name">Arash Fast Food</h2>
+      
+      <!-- دەق -->
+      <p class="modal__desc">
+        لە ٢٠١٥ەوە خزمەتتان دەکەین لە هەولێر...
+      </p>
+      
+      <!-- ئەستاتیستیک -->
+      <div class="about-stats">
+        <div class="about-stat">
+          <span class="about-stat__num">١٠</span>
+          <span class="about-stat__label">ساڵ</span>
+        </div>
+        <div class="about-stat">
+          <span class="about-stat__num">٢٠+</span>
+          <span class="about-stat__label">خواردن</span>
+        </div>
+        <div class="about-stat">
+          <span class="about-stat__num">📍</span>
+          <span class="about-stat__label">هەولێر</span>
+        </div>
+      </div>
+      
+      <!-- دوگمەی داخستن -->
+      <div class="modal__footer">
+        <button class="modal__fav-btn" id="aboutClose">
+          <i class="fa-solid fa-xmark"></i>
+          <span>داخستن</span>
+        </button>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
 
   <!-- ============================================
 	   JAVASCRIPT
@@ -1223,7 +1300,13 @@
 	  add_fav:			'زیادکردن بۆ دڵخواز',
 	  remove_fav:		 'لابردن لە دڵخواز',
 	  footer_copy:		'هەموو مافەکان پارێزراون © 2025',
-	},
+	about_title:  'دەربارەی خواردنگەکە',
+  about_desc:   'لە ٢٠١٥ەوە خزمەتتان دەکەین لە هەولێر — گۆڕانی چێژی خواردن',
+  about_years:  'ساڵ',
+  about_meals:  'خواردن',
+  about_city:   'هەولێر',
+  about_close:  'داخستن',
+},
 	ar: {
 	  brand_tag:		  'قائمة رقمية',
 	  hero_tag:		   'قائمة مميزة',
@@ -1243,7 +1326,13 @@
 	  add_fav:			'إضافة إلى المفضلة',
 	  remove_fav:		 'إزالة من المفضلة',
 	  footer_copy:		'جميع الحقوق محفوظة © 2025',
-	},
+	about_title:  'عن المطعم',
+  about_desc:   'نخدمكم منذ ٢٠١٥ في أربيل — نغير مفهوم الطعام اللذيذ',
+  about_years:  'سنة',
+  about_meals:  'وجبة',
+  about_city:   'أربيل',
+  about_close:  'إغلاق',
+},
 	en: {
 	  brand_tag:		  'Digital Menu',
 	  hero_tag:		   'Today\'s Specials',
@@ -1263,7 +1352,13 @@
 	  add_fav:			'Add to Favorites',
 	  remove_fav:		 'Remove from Favorites',
 	  footer_copy:		'All rights reserved © 2025',
-	},
+	about_title:  'About Us',
+  about_desc:   'Serving you since 2015 in Erbil — redefining great food',
+  about_years:  'Years',
+  about_meals:  'Meals',
+  about_city:   'Erbil',
+  about_close:  'Close',
+},
   };
 
   /* ================================================
@@ -1701,6 +1796,24 @@ document.querySelectorAll('.lang-picker__btn').forEach(btn => {
 	renderFavorites();
 	renderRecentlyViewed();
   }
+
+// About Modal
+$('aboutToggle').addEventListener('click', () => {
+  $('aboutOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+});
+
+$('aboutClose').addEventListener('click', () => {
+  $('aboutOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+});
+
+$('aboutOverlay').addEventListener('click', e => {
+  if (e.target === $('aboutOverlay')) {
+    $('aboutOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+});
 
   init();
   </script>
