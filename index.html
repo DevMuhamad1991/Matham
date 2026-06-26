@@ -313,18 +313,6 @@ animation:fadeUp .18s var(--ease) both;
 .lc-img img{transition:transform .5s ease}
 .lcard:hover .lc-img img{transform:scale(1.06)}
 /* gradient bleeds into card content — the signature effect */
-.lc-img::after{
-  content:'';
-  position:absolute;inset:0;
-  background:linear-gradient(to var(--text-side,left),rgba(44,13,13,0) 35%,var(--layer1) 100%);
-  pointer-events:none;
-}
-[dir=ltr] .lc-img::after{
-  --text-side:right;
-}
-[dir=rtl] .lc-img::after{
-  --text-side:left;
-}
 
 .lc-body{
   flex:1;padding:14px 16px;
