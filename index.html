@@ -1583,16 +1583,24 @@ recentlyViewed: [],
 	 7. FAVORITES
   ================================================ */
   function toggleFav(id) {
-	const idx = state.favorites.indexOf(id);
-	if (idx === -1) {
-	  state.favorites.push(id);
-	} else {
-	  state.favorites.splice(idx, 1);
-	}
-	localStorage.setItem('arash_favs', JSON.stringify(state.favorites));
-	renderMeals();
-	renderFavorites();
+  const idx = state.favorites.indexOf(id);
+  if (idx === -1) {
+    state.favorites.push(id);
+  } else {
+    state.favorites.splice(idx, 1);
   }
+  localStorage.setItem('arash_favs', JSON.stringify(state.favorites));
+  
+  // تەنها ئایکۆنی دڵەکە بگۆڕە
+  const favBtns = document.querySelectorAll(`.meal-card__fav[data-id="${id}"]`);
+  favBtns.forEach(btn => {
+    const isFav = state.favorites.includes(id);
+    btn.className = `meal-card__fav ${isFav ? 'is-fav' : ''}`;
+    btn.innerHTML = `<i class="${isFav ? 'fa-solid' : 'fa-regular'} fa-heart"></i>`;
+  });
+
+  renderFavorites();
+}
 
   function renderFavorites() {
 	const favMeals = MEALS.filter(m => state.favorites.includes(m.id));
