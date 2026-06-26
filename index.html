@@ -528,10 +528,6 @@ body.lang-ar  .modal-name{font-family:'Noto Naskh Arabic','Cormorant Garamond',s
 
 <!-- ════════════════ NAV ════════════════ -->
 <header class="nav" role="banner">
-  <div class="nav-left">
-
-  </div>
-
   <div class="nav-brand" data-i18n="brand">ئاراش فاست فوود</div>
 
   <div class="nav-right">
@@ -979,8 +975,12 @@ function openModal(id){
   markRecent(id);
   renderSide();
 
-  document.getElementById('mImg').src  = m.img;
-  document.getElementById('mImg').alt  = loc(m.name);
+const img = document.getElementById('mImg');
+if(img.dataset.loaded !== String(id)){
+  img.src = m.img;
+  img.dataset.loaded = id;
+}
+img.alt = loc(m.name);
   document.getElementById('mCat').textContent  = t('cat_'+m.cat);
   document.getElementById('mName').textContent = loc(m.name);
   document.getElementById('mPrice').textContent = m.price.toLocaleString();
