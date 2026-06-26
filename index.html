@@ -1600,14 +1600,17 @@ recentlyViewed: [],
 	const sec = $('favSection');
 	const scroll = $('favScroll');
 
-	if (favMeals.length === 0) { sec.style.display = 'none'; return; }
-	sec.style.display = 'block';
+if (favMeals.length === 0) { sec.style.display = 'none'; return; }
+  sec.style.display = 'block';
 
-	scroll.innerHTML = '';
-	favMeals.forEach(m => {
-	  scroll.appendChild(buildMiniCard(m));
-	});
-  }
+  const scrollY = window.scrollY;
+  scroll.innerHTML = '';
+  favMeals.forEach(m => {
+    scroll.appendChild(buildMiniCard(m));
+  });
+  requestAnimationFrame(() => window.scrollTo(0, scrollY));
+}
+
 
   /* ================================================
 	 8. RECENTLY VIEWED
