@@ -936,9 +936,15 @@ function renderMenu(){
   }
   empty.classList.remove('on');
   const fn = S.view==='grid' ? gridCard : listCard;
-  grid.innerHTML = meals.map((m,i)=>fn(m,i)).join('');
-  // sync grid/list CSS class
   grid.className = S.view==='grid' ? 'grid-view' : 'list-view';
+
+const newIds = meals.map(m=>m.id).join(',');
+const oldIds = [...grid.querySelectorAll('[data-id]')].map(e=>e.dataset.id).join(',');
+const viewChanged = grid.dataset.view !== S.view;
+
+if(newIds !== oldIds || viewChanged){
+  grid.innerHTML = meals.map((m,i)=>fn(m,i)).join('');
+  grid.dataset.view = S.view;
 }
 
 /* ════════════════════════════════════════════════════════════════
