@@ -580,67 +580,7 @@
       white-space: nowrap;
     }
 
-    /* =============================================
-       RECENTLY VIEWED & FAVORITES SECTION
-    ============================================= */
-    .extras-section {
-      padding: 0 20px 12px;
-    }
-
-    .extras-scroll {
-      display: flex;
-      gap: 12px;
-      overflow-x: auto;
-      padding-bottom: 4px;
-      scrollbar-width: none;
-    }
-
-    .extras-scroll::-webkit-scrollbar { display: none; }
-
-    .mini-card {
-      flex-shrink: 0;
-      width: 130px;
-      background: var(--clr-card);
-      border: 1px solid var(--clr-border);
-      border-radius: var(--radius-md);
-      overflow: hidden;
-      cursor: pointer;
-      transition: transform var(--transition), border-color var(--transition);
-    }
-
-    .mini-card:hover { transform: translateY(-3px); border-color: rgba(212,175,55,0.3); }
-
-    .mini-card img {
-      height: 80px;
-    }
-
-    .mini-card__info {
-      padding: 8px 10px;
-    }
-
-    .mini-card__name {
-      font-size: 0.8rem;
-      font-weight: 600;
-      line-height: 1.3;
-      margin-bottom: 2px;
-      display: -webkit-box;
-      -webkit-line-clamp: 1;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    .mini-card__price {
-      font-size: 0.75rem;
-      color: var(--clr-accent);
-      font-weight: 600;
-    }
-
-    /* Empty state */
-    .empty-extras {
-      font-size: 0.82rem;
-      color: var(--clr-muted);
-      padding: 8px 0;
-    }
+   
 
     /* =============================================
        EMPTY STATE (search)
@@ -1015,20 +955,6 @@
   </section>
 
   <!-- ============================================
-       RECENTLY VIEWED
-  ============================================= -->
-  <div id="recentSection" style="display:none;">
-    <div class="section-header">
-      <div class="section-header__line"></div>
-      <span class="section-header__title" data-i18n="recently_viewed">کۆتا بینراوەکان</span>
-      <div class="section-header__line"></div>
-    </div>
-    <div class="extras-section">
-      <div class="extras-scroll" id="recentScroll"></div>
-    </div>
-  </div>
-
-  <!-- ============================================
        FAVORITES
   ============================================= -->
   <div id="favSection" style="display:none;">
@@ -1129,7 +1055,7 @@
       cat_pizza:          'پیتزا',
       cat_drink:          'خواردنەوە',
       search_placeholder: 'گەڕان لە خواردنەکان...',
-      recently_viewed:    'کۆتا بینراوەکان',
+
       favorites:          'دڵخوازەکان',
       meal_count_label:   'خواردن',
       no_results_title:   'هیچ ئەنجامێک نەدۆزرایەوە',
@@ -1149,7 +1075,7 @@
       cat_pizza:          'بيتزا',
       cat_drink:          'مشروبات',
       search_placeholder: 'ابحث عن الأطباق...',
-      recently_viewed:    'شوهدت مؤخراً',
+
       favorites:          'المفضلة',
       meal_count_label:   'وجبة',
       no_results_title:   'لا توجد نتائج',
@@ -1169,7 +1095,7 @@
       cat_pizza:          'Pizza',
       cat_drink:          'Drinks',
       search_placeholder: 'Search meals...',
-      recently_viewed:    'Recently Viewed',
+
       favorites:          'Favorites',
       meal_count_label:   'meals',
       no_results_title:   'No results found',
@@ -1255,7 +1181,6 @@
     searchQuery: '',
     viewMode: 'grid',        // 'grid' | 'list'
     favorites: JSON.parse(localStorage.getItem('arash_favs') || '[]'),
-    recentlyViewed: JSON.parse(localStorage.getItem('arash_recent') || '[]'),
     openMealId: null,
   };
 
@@ -1371,10 +1296,6 @@
     $('modalOverlay').classList.add('open');
     document.body.style.overflow = 'hidden';
 
-    // Add to recently viewed
-    addRecentlyViewed(id);
-  }
-
   function closeModal() {
     $('modalOverlay').classList.remove('open');
     document.body.style.overflow = '';
@@ -1429,49 +1350,6 @@
     favMeals.forEach(m => {
       scroll.appendChild(buildMiniCard(m));
     });
-  }
-
-  /* ================================================
-     8. RECENTLY VIEWED
-  ================================================ */
-  function addRecentlyViewed(id) {
-    state.recentlyViewed = state.recentlyViewed.filter(i => i !== id);
-    state.recentlyViewed.unshift(id);
-    state.recentlyViewed = state.recentlyViewed.slice(0, 10);
-    localStorage.setItem('arash_recent', JSON.stringify(state.recentlyViewed));
-    renderRecentlyViewed();
-  }
-
-  function renderRecentlyViewed() {
-    const recentMeals = state.recentlyViewed
-      .map(id => MEALS.find(m => m.id === id))
-      .filter(Boolean);
-
-    const sec = $('recentSection');
-    const scroll = $('recentScroll');
-
-    if (recentMeals.length === 0) { sec.style.display = 'none'; return; }
-    sec.style.display = 'block';
-
-    scroll.innerHTML = '';
-    recentMeals.forEach(m => {
-      scroll.appendChild(buildMiniCard(m));
-    });
-  }
-
-  /** Shared mini card builder for recent + favorites */
-  function buildMiniCard(meal) {
-    const div = document.createElement('div');
-    div.className = 'mini-card';
-    div.innerHTML = `
-      <img src="${meal.image}" alt="${ml(meal.name)}" loading="lazy" />
-      <div class="mini-card__info">
-        <p class="mini-card__name">${ml(meal.name)}</p>
-        <p class="mini-card__price">${meal.price}</p>
-      </div>
-    `;
-    div.addEventListener('click', () => openModal(meal.id));
-    return div;
   }
 
   /* ================================================
@@ -1559,7 +1437,6 @@
     // Re-render dynamic content
     renderMeals();
     renderFavorites();
-    renderRecentlyViewed();
 
     // Update modal if open
     if (state.openMealId) openModal(state.openMealId);
@@ -1602,7 +1479,6 @@
     applyTranslations();
     renderMeals();
     renderFavorites();
-    renderRecentlyViewed();
   }
 
   init();
