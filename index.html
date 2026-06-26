@@ -1065,11 +1065,14 @@ document.getElementById('catsTrack').addEventListener('click', e=>{
   const tile = e.target.closest('[data-cat]');
   if(!tile) return;
   S.cat = tile.dataset.cat;
-  renderAll();
+  renderCats();
+  renderMenu();
+  applyI18n();
 });
 document.getElementById('catsTrack').addEventListener('keydown', e=>{
-  if(e.key==='Enter'){ const tile=e.target.closest('[data-cat]'); if(tile){S.cat=tile.dataset.cat;renderAll();} }
+  if(e.key==='Enter'){ const tile=e.target.closest('[data-cat]'); if(tile){S.cat=tile.dataset.cat;renderCats();renderMenu();applyI18n();} }
 });
+
 
 /* Menu card / fav clicks */
 document.getElementById('menuGrid').addEventListener('click', e=>{
