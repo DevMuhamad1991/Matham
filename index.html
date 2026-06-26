@@ -1341,7 +1341,7 @@
 	searchQuery: '',
 	viewMode: 'grid',		// 'grid' | 'list'
 	favorites: JSON.parse(localStorage.getItem('arash_favs') || '[]'),
-	recentlyViewed: JSON.parse(localStorage.getItem('arash_recent') || '[]'),
+recentlyViewed: [],
 	openMealId: null,
   };
 
@@ -1524,7 +1524,6 @@
 	state.recentlyViewed = state.recentlyViewed.filter(i => i !== id);
 	state.recentlyViewed.unshift(id);
 	state.recentlyViewed = state.recentlyViewed.slice(0, 10);
-	localStorage.setItem('arash_recent', JSON.stringify(state.recentlyViewed));
 	renderRecentlyViewed();
   }
 
