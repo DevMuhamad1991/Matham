@@ -833,7 +833,19 @@ function toast(msg){
    7. RENDER CATEGORIES
 ════════════════════════════════════════════════════════════════ */
 function renderCats(){
-  document.getElementById('catsTrack').innerHTML = CATS.map(c=>`
+  const track = document.getElementById('catsTrack');
+  const existing = track.querySelectorAll('[data-cat]');
+  
+  if(existing.length === CATS.length){
+    existing.forEach(tile=>{
+      const on = tile.dataset.cat === S.cat;
+      tile.classList.toggle('on', on);
+      tile.setAttribute('aria-pressed', String(on));
+    });
+    return;
+  }
+
+  track.innerHTML = CATS.map(c=>`
 	<li class="cat-tile${S.cat===c.id?' on':''}" role="listitem" data-cat="${c.id}"
 		tabindex="0" aria-pressed="${S.cat===c.id}" aria-label="${t(c.labelKey)}">
 	  <div class="cat-img-ring">
