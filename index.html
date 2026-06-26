@@ -276,9 +276,9 @@ body.lang-ar  .section-label{font-family:'Noto Naskh Arabic','Cormorant Garamond
   cursor:pointer;
   transition:transform var(--t) var(--ease),box-shadow var(--t),border-color var(--t);
   position:relative;
-  animation:fadeUp .38s var(--ease) both;
+animation:fadeUp .18s var(--ease) both;
 }
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .gcard:hover{transform:translateY(-5px);box-shadow:var(--sh-md);border-color:rgba(212,175,55,.22)}
 .gcard:active{transform:translateY(-2px)}
 
@@ -343,7 +343,7 @@ body.lang-ar  .section-label{font-family:'Noto Naskh Arabic','Cormorant Garamond
   display:flex;
   height:120px;
   transition:transform var(--t) var(--ease),box-shadow var(--t),border-color var(--t);
-  animation:fadeUp .38s var(--ease) both;
+animation:fadeUp .18s var(--ease) both;
 }
 .lcard:hover{transform:translateY(-3px);box-shadow:var(--sh-md);border-color:rgba(212,175,55,.2)}
 @media(min-width:640px){.lcard{height:140px}}
@@ -964,7 +964,7 @@ function renderSide(){
 ════════════════════════════════════════════════════════════════ */
 function gridCard(m, idx){ return `
   <article class="gcard" role="listitem" data-id="${m.id}" tabindex="0"
-	aria-label="${loc(m.name)}" style="animation-delay:${idx*0.05}s">
+	aria-label="${loc(m.name)}">
 	<div class="gc-img">
 	  <img src="${m.img}" alt="${loc(m.name)}" loading="lazy"/>
 	  <span class="gc-price-float">${m.price.toLocaleString()} <small>${t('currency')}</small></span>
@@ -983,7 +983,7 @@ function gridCard(m, idx){ return `
 ════════════════════════════════════════════════════════════════ */
 function listCard(m, idx){ return `
   <article class="lcard" role="listitem" data-id="${m.id}" tabindex="0"
-	aria-label="${loc(m.name)}" style="animation-delay:${idx*0.04}s">
+	aria-label="${loc(m.name)}">
 	<div class="lc-img">
 	  <img src="${m.img}" alt="${loc(m.name)}" loading="lazy"/>
 	</div>
