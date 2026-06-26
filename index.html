@@ -109,49 +109,6 @@ body.lang-ar  .nav-brand{font-family:'Noto Naskh Arabic','Cormorant Garamond',se
 .lpb.on{background:var(--gold);color:var(--ink)}
 .lpb:hover:not(.on){color:var(--cream);background:rgba(255,255,255,.08)}
 
-/* ═══════════════════════════════════════════════════════════════
-   SEARCH BAR (collapsible below nav)
-═══════════════════════════════════════════════════════════════ */
-.search-bar{
-  background:var(--glass);
-  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-  border-bottom:1px solid rgba(212,175,55,.08);
-  padding:10px 16px;
-  display:none;
-}
-.search-bar.open{display:block}
-.search-inner{
-  position:relative;
-  max-width:600px;margin:0 auto;
-  display:flex;align-items:center;
-}
-.si-icon{
-  position:absolute;inset-inline-start:14px;
-  color:var(--faint);font-size:14px;pointer-events:none;
-}
-.si{
-  width:100%;
-  background:var(--layer1);
-  border:1px solid rgba(212,175,55,.15);
-  border-radius:var(--r-xl);
-  color:var(--cream);
-  padding:11px 44px 11px 44px;
-  outline:none;
-  transition:border-color var(--t),box-shadow var(--t);
-}
-[dir=ltr] .si{padding-left:42px;padding-right:42px}
-.si::placeholder{color:var(--faint)}
-.si:focus{border-color:rgba(212,175,55,.45);box-shadow:0 0 0 3px rgba(212,175,55,.08)}
-.si-clear{
-  position:absolute;inset-inline-end:12px;
-  width:26px;height:26px;border-radius:50%;
-  background:rgba(255,255,255,.07);
-  display:flex;align-items:center;justify-content:center;
-  color:var(--faint);font-size:12px;
-  opacity:0;pointer-events:none;
-  transition:opacity var(--t);
-}
-.si-clear.on{opacity:1;pointer-events:auto}
 
 /* ═══════════════════════════════════════════════════════════════
    CATEGORY SLIDER  — image-tile style like the reference
@@ -584,9 +541,7 @@ body.lang-ar  .modal-name{font-family:'Noto Naskh Arabic','Cormorant Garamond',s
 <!-- ════════════════ NAV ════════════════ -->
 <header class="nav" role="banner">
   <div class="nav-left">
-	<button class="nav-icon-btn" id="searchToggleBtn" aria-label="Toggle search" aria-expanded="false">
-	  <i class="fa-solid fa-magnifying-glass"></i>
-	</button>
+
   </div>
 
   <div class="nav-brand" data-i18n="brand">ئاراش فاست فوود</div>
@@ -601,18 +556,6 @@ body.lang-ar  .modal-name{font-family:'Noto Naskh Arabic','Cormorant Garamond',s
   </div>
 </header>
 
-<!-- ════════════════ SEARCH ════════════════ -->
-<div class="search-bar" id="searchBar" role="search">
-  <div class="search-inner">
-	<i class="fa-solid fa-magnifying-glass si-icon" aria-hidden="true"></i>
-	<input class="si" id="si" type="search" autocomplete="off"
-	  data-i18n-placeholder="search_ph" placeholder="گەڕان..."
-	  aria-label="Search meals"/>
-	<button class="si-clear" id="siClear" aria-label="Clear">
-	  <i class="fa-solid fa-xmark"></i>
-	</button>
-  </div>
-</div>
 
 <main>
 
@@ -720,7 +663,6 @@ body.lang-ar  .modal-name{font-family:'Noto Naskh Arabic','Cormorant Garamond',s
 const I18N = {
   ckb:{
 	brand:'ئاراش فاست فوود',
-	search_ph:'گەڕان...',
 	favorites:'دڵخوازەکان',
 	recently_viewed:'دوا بینراوەکان',
 	all_meals:'هەموو خواردنەکان',
@@ -740,7 +682,6 @@ const I18N = {
   },
   ar:{
 	brand:'آراش فاست فود',
-	search_ph:'بحث...',
 	favorites:'المفضلة',
 	recently_viewed:'شوهد مؤخراً',
 	all_meals:'جميع الوجبات',
@@ -760,12 +701,11 @@ const I18N = {
   },
   en:{
 	brand:'Arash Fast Food',
-	search_ph:'Search...',
 	favorites:'Favorites',
 	recently_viewed:'Recently Viewed',
 	all_meals:'All Meals',
 	no_results:'No results found',
-	try_other:'Try a different search',
+
 	price:'Price',
 	currency:'IQD',
 	rights:'All rights reserved',
@@ -852,7 +792,6 @@ const MEALS = [
 const S = {
   lang:'ckb',
   cat:'all',
-  q:'',
   view:'grid',	   // 'grid'|'list'
   favs: safeJSON('arash_favs', []),
   recent: safeJSON('arash_recent', []),
@@ -873,12 +812,7 @@ const t   = k => I18N[S.lang][k] || k;
 const loc = o => o[S.lang] || o.en;
 
 const filtered = () => {
-  const q = S.q.trim().toLowerCase();
-  return MEALS.filter(m => {
-	const catOk = S.cat==='all' || m.cat===S.cat;
-	const qOk   = !q || loc(m.name).toLowerCase().includes(q) || loc(m.desc).toLowerCase().includes(q);
-	return catOk && qOk;
-  });
+  return MEALS.filter(m => S.cat==='all' || m.cat===S.cat);
 };
 
 function markRecent(id){
@@ -1115,31 +1049,6 @@ function setView(v){
   renderMenu();
 }
 
-/* ════════════════════════════════════════════════════════════════
-   17. EVENT WIRING
-════════════════════════════════════════════════════════════════ */
-
-/* Search toggle */
-const searchBar = document.getElementById('searchBar');
-document.getElementById('searchToggleBtn').addEventListener('click', ()=>{
-  const open = searchBar.classList.toggle('open');
-  document.getElementById('searchToggleBtn').setAttribute('aria-expanded', String(open));
-  if(open) document.getElementById('si').focus();
-  else { document.getElementById('si').value=''; S.q=''; document.getElementById('siClear').classList.remove('on'); renderMenu(); }
-});
-
-/* Search input */
-const siEl = document.getElementById('si');
-siEl.addEventListener('input', ()=>{
-  S.q = siEl.value;
-  document.getElementById('siClear').classList.toggle('on', !!S.q);
-  renderMenu();
-});
-document.getElementById('siClear').addEventListener('click', ()=>{
-  siEl.value=''; S.q='';
-  document.getElementById('siClear').classList.remove('on');
-  siEl.focus(); renderMenu();
-});
 
 /* Category clicks */
 document.getElementById('catsTrack').addEventListener('click', e=>{
