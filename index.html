@@ -895,6 +895,62 @@
 
 .lang-picker__btn .flag { font-size: 1.4rem; }
 
+.search-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  margin-top: 6px;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  z-index: 50;
+  display: none;
+}
+
+.search-suggestions.open {
+  display: block;
+}
+
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background var(--transition);
+  border-bottom: 1px solid var(--clr-border);
+}
+
+.suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.suggestion-item:hover {
+  background: var(--clr-primary);
+}
+
+.suggestion-item__img {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.suggestion-item__name {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--clr-text);
+}
+
+.suggestion-item__name em {
+  font-style: normal;
+  color: var(--clr-accent);
+}
+
   </style>
 </head>
 <body>
@@ -946,7 +1002,12 @@
        SEARCH BAR
   ============================================= -->
   <div class="search-bar" id="searchBar">
-    <div class="search-bar__inner">
+<div class="search-bar__inner">
+  <input ... />
+  <i class="fa-solid fa-magnifying-glass search-bar__icon"></i>
+  <div class="search-suggestions" id="searchSuggestions"></div>
+</div>
+
       <input
         class="search-bar__input"
         id="searchInput"
@@ -1466,7 +1527,56 @@
   $('searchInput').addEventListener('input', e => {
     state.searchQuery = e.target.value;
     renderMeals();
+    renderSuggestions(e.target.value);
   });
+
+  $('searchInput').addEventListener('blur', () => {
+    setTimeout(() => {
+      $('searchSuggestions').classList.remove('open');
+    }, 200);
+  });
+
+  function renderSuggestions(query) {
+    const box = $('searchSuggestions');
+    const q = query.trim().toLowerCase();
+
+    if (!q) { box.classList.remove('open'); return; }
+
+    const matched = MEALS.filter(m =>
+      ml(m.name).toLowerCase().includes(q)
+    ).slice(0, 5);
+
+    if (matched.length === 0) { box.classList.remove('open'); return; }
+
+    box.innerHTML = '';
+    matched.forEach(meal => {
+      const name = ml(meal.name);
+      const highlighted = name.replace(
+        new RegExp(q, 'gi'),
+        match => `<em>${match}</em>`
+      );
+
+      const item = document.createElement('div');
+      item.className = 'suggestion-item';
+      item.innerHTML = `
+        <img class="suggestion-item__img" src="${meal.image}" alt="${name}" />
+        <span class="suggestion-item__name">${highlighted}</span>
+      `;
+
+      item.addEventListener('click', () => {
+        box.classList.remove('open');
+        $('searchInput').value = '';
+        state.searchQuery = '';
+        renderMeals();
+        openModal(meal.id);
+      });
+
+      box.appendChild(item);
+    });
+
+    box.classList.add('open');
+  }
+
 
   /* ================================================
      11. VIEW TOGGLE
