@@ -724,6 +724,17 @@ function checkAccess(){
     return true;
   }
 
+function startTimer(){
+  const exp = Number(sessionStorage.getItem('qr_exp'));
+  const remaining = exp - Date.now();
+  if(remaining > 0){
+    setTimeout(()=>{
+      sessionStorage.clear();
+      showExpired();
+    }, remaining);
+  }
+}
+
   // ٣. هیچیان نییە — مینۆ ببەستە
   showExpired();
   return false;
