@@ -73,7 +73,8 @@ input{font-family:inherit;font-size:inherit}
   border-bottom:1px solid rgba(212,175,55,.12);
   padding:0 16px;
   height:60px;
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
+display:flex;align-items:center;justify-content:space-between;gap:12px;
+flex-direction:row;
 }
 .nav-left,.nav-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
 /* search icon btn */
@@ -87,14 +88,14 @@ input{font-family:inherit;font-size:inherit}
 .nav-icon-btn:hover{background:var(--layer2);color:var(--cream)}
 /* brand */
 .nav-brand{
-  text-align:center;
   font-family:var(--font-display);
-  font-size:22px;font-weight:700;
+  font-size:18px;font-weight:700;
   color:var(--gold);
   letter-spacing:.4px;
-  flex:1;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap;
+  flex-shrink:0;
 }
+
 
 /* lang pill */
 .lang-pill{
@@ -526,12 +527,11 @@ body.lang-ar  .modal-name{font-family:'Noto Naskh Arabic','Cormorant Garamond',s
 
 <!-- ════════════════ NAV ════════════════ -->
 <header class="nav" role="banner">
-<div class="nav-brand">
+<div class="nav-brand" style="flex:0;white-space:nowrap">
   <i class="fa-solid fa-burger" style="font-size:18px;margin-inline-end:8px"></i>
   Arash FastFood
 </div>
-
-  <div class="nav-right">
+  <div class="nav-right" style="margin-inline-start:auto">
 	<!-- view toggle in nav on very small screens hidden here, shown in toolbar -->
 	<div class="lang-pill" role="group" aria-label="Language">
   <button class="lpb on" data-lang="ckb" aria-pressed="true">کوردی</button>
