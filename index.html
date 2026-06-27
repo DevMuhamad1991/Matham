@@ -540,6 +540,22 @@ body.lang-ar  .modal-name{font-family:'Noto Naskh Arabic','Cormorant Garamond',s
 </head>
 <body class="lang-ckb" dir="rtl">
 
+<div id="expiredScreen" style="display:none;
+  position:fixed;inset:0;z-index:9999;
+  background:#3B1111;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;padding:32px;">
+  <i class="fa-solid fa-qrcode" 
+     style="font-size:72px;color:#D4AF37;margin-bottom:24px"></i>
+  <h2 style="color:#F5E8C8;font-size:22px;margin-bottom:12px">
+    ماوەی بینینت تەواو بوو
+  </h2>
+  <p style="color:#C4A882;font-size:15px">
+    تکایە دووبارە QR Code سکان بکە
+  </p>
+</div>
+
 <!-- ════════════════ NAV ════════════════ -->
 <header class="nav" role="banner">
 <div class="nav-brand" style="flex:0;white-space:nowrap">
@@ -686,6 +702,33 @@ body.lang-ar  .modal-name{font-family:'Noto Naskh Arabic','Cormorant Garamond',s
 </div>
 
 <script>
+
+function checkAccess(){
+  const params = new URLSearchParams(window.location.search);
+  const token  = params.get('token');
+  const exp    = params.get('exp');
+  const now    = Date.now();
+
+  // ١. ئایا URL Token هەیە و بەسەرنەچووە؟
+  if(token && exp && now < Number(exp)){
+    sessionStorage.setItem('qr_token', token);
+    sessionStorage.setItem('qr_exp',   exp);
+    // Token لە URL بسڕەوە بەبێ ریفرێش
+    window.history.replaceState({}, '', window.location.pathname);
+    return true;
+  }
+
+  // ٢. ئایا SessionStorage Token هەیە و بەسەرنەچووە؟
+  const storedExp = sessionStorage.getItem('qr_exp');
+  if(storedExp && now < Number(storedExp)){
+    return true;
+  }
+
+  // ٣. هیچیان نییە — مینۆ ببەستە
+  showExpired();
+  return false;
+}
+
 /* ════════════════════════════════════════════════════════════════
    1. TRANSLATIONS
 ════════════════════════════════════════════════════════════════ */
@@ -1254,12 +1297,20 @@ document.querySelectorAll('.lpb').forEach(b=>b.addEventListener('click',()=>setL
 /* Keyboard */
 document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
 
+function showExpired(){
+  document.getElementById('expiredScreen').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
 /* ════════════════════════════════════════════════════════════════
    18. INIT
 ════════════════════════════════════════════════════════════════ */
 MEALS.forEach(m=>{ const i=new Image(); i.src=m.img; });
 
-setLang('ckb');
+if(checkAccess()){
+  startTimer();
+  setLang('ckb');
+}
 </script>
 </body>
 </html>
