@@ -897,33 +897,32 @@ function renderSide(){
   const newIds = favMs.map(m=>m.id);
   const changed = JSON.stringify(currentIds) !== JSON.stringify(newIds);
 
-if(changed){
-  // کارتەکانی نەماون بسرە
-  [...track.querySelectorAll('[data-id]')].forEach(card=>{
-    if(!favMs.find(m=>m.id===Number(card.dataset.id))) card.remove();
-  });
-  // کارتەکانی نوێ زیاد بکە
-  favMs.forEach(m=>{
-    if(!track.querySelector(`[data-id="${m.id}"]`)){
-      const div = document.createElement('div');
-      div.innerHTML = miniCard(m);
-      track.appendChild(div.firstElementChild);
-    }
-  });
+ if(changed){
+   [...track.querySelectorAll('[data-id]')].forEach(card=>{
+     if(!favMs.find(m=>m.id===Number(card.dataset.id))) card.remove();
+   });
+   favMs.forEach(m=>{
+     if(!track.querySelector(`[data-id="${m.id}"]`)){
+       const div = document.createElement('div');
+       div.innerHTML = miniCard(m);
+       track.appendChild(div.firstElementChild);
+     }
+   });
+ }
 }
-
 
 const IMG_CACHE = {};
-function cachedImg(src, alt, cls){
-  if(!IMG_CACHE[src]){
-    const img = document.createElement('img');
-    img.src = src;
-    img.alt = alt;
-    img.loading = 'lazy';
-    IMG_CACHE[src] = img;
-  }
-  return IMG_CACHE[src].outerHTML;
+function cachedImg(src, alt){
+ if(!IMG_CACHE[src]){
+   const img = document.createElement('img');
+   img.src = src;
+   img.alt = alt;
+   img.loading = 'lazy';
+   IMG_CACHE[src] = img;
+ }
+ return IMG_CACHE[src].outerHTML;
 }
+
 
 /* ════════════════════════════════════════════════════════════════
    9. RENDER GRID CARD
