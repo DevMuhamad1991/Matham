@@ -939,7 +939,7 @@ function renderCats(){
 ════════════════════════════════════════════════════════════════ */
 function miniCard(m){ return `
   <article class="mini" role="listitem" data-id="${m.id}" tabindex="0" aria-label="${loc(m.name)}">
-	<img class="mini-img" src="${m.img}" alt="${loc(m.name)}" loading="lazy"/>
+<img class="mini-img" src="${IMG_CACHE[m.img] ? IMG_CACHE[m.img].src : m.img}" alt="${loc(m.name)}" loading="lazy"/>
 	<div class="mini-body">
 	  <div class="mini-name">${loc(m.name)}</div>
 	  <div class="mini-price">${m.price.toLocaleString()} ${t('currency')}</div>
