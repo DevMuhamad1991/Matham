@@ -513,6 +513,8 @@ body.lang-ar  .modal-name{font-family:'Noto Naskh Arabic','Cormorant Garamond',s
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important}
 }
+
+.gc-img img, .lc-img img { content-visibility: auto; }
 </style>
 </head>
 <body class="lang-ckb" dir="rtl">
@@ -894,6 +896,17 @@ function renderSide(){
   if(changed) track.innerHTML = favMs.map(miniCard).join('');
 }
 
+const IMG_CACHE = {};
+function cachedImg(src, alt, cls){
+  if(!IMG_CACHE[src]){
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = alt;
+    img.loading = 'lazy';
+    IMG_CACHE[src] = img;
+  }
+  return IMG_CACHE[src].outerHTML;
+}
 
 /* ════════════════════════════════════════════════════════════════
    9. RENDER GRID CARD
@@ -921,7 +934,7 @@ function listCard(m, idx){ return `
   <article class="lcard" role="listitem" data-id="${m.id}" tabindex="0"
 	aria-label="${loc(m.name)}">
 	<div class="lc-img">
-	  <img src="${m.img}" alt="${loc(m.name)}" loading="lazy"/>
+${cachedImg(m.img, loc(m.name))}
 	</div>
 	<div class="lc-body">
 	  <div>
@@ -1140,6 +1153,8 @@ document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
 /* ════════════════════════════════════════════════════════════════
    18. INIT
 ════════════════════════════════════════════════════════════════ */
+MEALS.forEach(m=>{ const i=new Image(); i.src=m.img; });
+
 setLang('ckb');
 </script>
 </body>
