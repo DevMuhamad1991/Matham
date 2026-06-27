@@ -178,9 +178,6 @@ flex-direction:row;
   margin:-4px auto 0;
 }
 
-body.lang-en .nav-brand{
-  font-family: system-ui, sans-serif;
-}
 .lpb{
   font-family: system-ui, sans-serif !important;
 }
@@ -527,6 +524,11 @@ body.lang-ar  .modal-name{font-family:'Noto Naskh Arabic','Cormorant Garamond',s
 
 .gc-img img, .lc-img img { content-visibility: auto; }
 .gcard.hidden, .lcard.hidden{display:none!important;}
+
+/* لە خانەی :root یا کۆتایی CSS */
+.modal-name {
+  font-family: 'Noto Sans Arabic', Georgia, serif !important;
+}
 
 </style>
 </head>
@@ -1197,14 +1199,26 @@ document.getElementById('catsTrack').addEventListener('keydown', e=>{
 
 /* Menu card / fav clicks */
 document.getElementById('menuGrid').addEventListener('click', e=>{
-  const fav = e.target.closest('[data-fav]');
-  if(fav){ e.stopPropagation(); toggleFav(Number(fav.dataset.fav)); return; }
-  const card = e.target.closest('[data-id]');
-  if(card) openModal(Number(card.dataset.id));
+ const fav = e.target.closest('[data-fav]');
+ if(fav){ e.stopPropagation(); toggleFav(Number(fav.dataset.fav)); return; }
+ const card = e.target.closest('[data-id]');
+ if(card) openModal(Number(card.dataset.id));
 });
 document.getElementById('menuGrid').addEventListener('keydown', e=>{
-  if(e.key==='Enter'){ const card=e.target.closest('[data-id]'); if(card) openModal(Number(card.dataset.id)); }
+ if(e.key==='Enter'){ const card=e.target.closest('[data-id]'); if(card) openModal(Number(card.dataset.id)); }
 });
+
+/* ✅ List View — نوێ زیادکرا */
+document.getElementById('menuList').addEventListener('click', e=>{
+ const fav = e.target.closest('[data-fav]');
+ if(fav){ e.stopPropagation(); toggleFav(Number(fav.dataset.fav)); return; }
+ const card = e.target.closest('[data-id]');
+ if(card) openModal(Number(card.dataset.id));
+});
+document.getElementById('menuList').addEventListener('keydown', e=>{
+ if(e.key==='Enter'){ const card=e.target.closest('[data-id]'); if(card) openModal(Number(card.dataset.id)); }
+});
+
 
 /* Side section clicks */
 [document.getElementById('favTrack'), document.getElementById('recentTrack')].forEach(el=>{
