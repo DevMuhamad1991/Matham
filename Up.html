@@ -998,7 +998,7 @@ function cachedImg(src, alt){
    const img = document.createElement('img');
    img.src = src;
    img.alt = alt;
-   img.loading = 'lazy';
+img.loading = 'eager';
    IMG_CACHE[src] = img;
  }
  return IMG_CACHE[src].outerHTML;
