@@ -590,7 +590,8 @@ body.lang-ar  .modal-name{font-family:'Noto Naskh Arabic','Cormorant Garamond',s
 
 <!-- ════════════════ MENU ════════════════ -->
 <div class="menu-wrap">
-  <div class="grid-view" id="menuGrid" role="list"></div>
+<div class="grid-view" id="menuGrid" role="list"></div>
+<div class="list-view" id="menuList" role="list" style="display:none"></div>
   <div class="empty" id="emptyState">
 	<div class="empty-icon"><i class="fa-solid fa-bowl-food"></i></div>
 	<p class="empty-title" data-i18n="no_results">هیچ ئەنجامێک نەدۆزرایەوە</p>
@@ -961,31 +962,35 @@ ${cachedImg(m.img, loc(m.name))}
 ════════════════════════════════════════════════════════════════ */
 function renderMenu(){
   const meals = filtered();
-  const grid  = document.getElementById('menuGrid');
-  const empty = document.getElementById('emptyState');
+  const gridEl = document.getElementById('menuGrid');
+  const listEl = document.getElementById('menuList');
+  const empty  = document.getElementById('emptyState');
+  const isGrid = S.view==='grid';
+
   document.getElementById('rCount').textContent = meals.length;
   empty.classList.toggle('on', !meals.length);
 
-  const fn = S.view==='grid' ? gridCard : listCard;
-  const viewChanged = grid.dataset.view !== S.view;
+  gridEl.style.display = isGrid ? '' : 'none';
+  listEl.style.display = isGrid ? 'none' : '';
+
+  const grid = isGrid ? gridEl : listEl;
+  const fn   = isGrid ? gridCard : listCard;
   const langChanged = grid.dataset.lang !== S.lang;
 
-  grid.className = S.view==='grid' ? 'grid-view' : 'list-view';
-
-  // یەکەم جار یان view گۆڕدرا — هەموو دووبارە بسازە
-  if(!grid.dataset.view || viewChanged){
+  // یەکەم جار — هەموو بسازە
+  if(!grid.dataset.built){
     grid.innerHTML = MEALS.map((m,i)=>fn(m,i)).join('');
-    grid.dataset.view = S.view;
-    grid.dataset.lang = S.lang;
+    grid.dataset.built = '1';
+    grid.dataset.lang  = S.lang;
   }
 
-  // تەنها پیشاندەی بگۆڕە — وێنە دەست پێ مەکە
+  // پیشاندەی بگۆڕە
   const mealIds = meals.map(m=>m.id);
   grid.querySelectorAll('[data-id]').forEach(card=>{
     card.classList.toggle('hidden', !mealIds.includes(Number(card.dataset.id)));
   });
 
-  // زمان گۆڕدرا — تەنها نووسین نوێ بکەرەوە
+  // زمان گۆڕدرا
   if(langChanged){
     grid.dataset.lang = S.lang;
     grid.querySelectorAll('[data-id]').forEach(card=>{
@@ -998,6 +1003,7 @@ function renderMenu(){
     });
   }
 }
+
 
 
 /* ════════════════════════════════════════════════════════════════
