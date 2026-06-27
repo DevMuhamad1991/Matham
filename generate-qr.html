@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>QR Generator</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body style="text-align:center;padding:40px;background:#3B1111;color:#F5E8C8">
+
+  <h2>QR Code دروست بکە</h2>
+  <button onclick="generate()" 
+    style="padding:12px 24px;background:#D4AF37;border:none;
+           border-radius:8px;font-size:16px;cursor:pointer;margin:16px">
+    QR دروست بکە (١٠ خولەک)
+  </button>
+  
+  <div id="qrcode" style="margin:24px auto;display:inline-block"></div>
+
+  <script>
+  function generate(){
+    const exp     = Date.now() + 10 * 60 * 1000; // ١٠ خولەک
+    const token   = Math.random().toString(36).slice(2);
+    const menuURL = 'https://ناونیشانەکەت.com/menu.html'; // ✏️ ئەمە بگۆڕە
+    const url     = `${menuURL}?token=${token}&exp=${exp}`;
+    
+    document.getElementById('qrcode').innerHTML = '';
+    new QRCode(document.getElementById('qrcode'), {
+      text: url, width: 256, height: 256
+    });
+  }
+  </script>
+</body>
+</html>
