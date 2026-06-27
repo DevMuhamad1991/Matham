@@ -841,6 +841,9 @@ function renderCats(){
       const on = tile.dataset.cat === S.cat;
       tile.classList.toggle('on', on);
       tile.setAttribute('aria-pressed', String(on));
+      const label = tile.querySelector('.cat-label');
+      const cat = CATS.find(c=>c.id===tile.dataset.cat);
+      if(label && cat) label.textContent = t(cat.labelKey);
     });
     return;
   }
@@ -967,17 +970,23 @@ if(viewChanged){
   [...grid.querySelectorAll('[data-id]')].forEach(card=>{
     if(!meals.find(m=>m.id===Number(card.dataset.id))) card.remove();
   });
-  // کارتەکانی نوێ زیاد بکە
-  const existingIds = [...grid.querySelectorAll('[data-id]')].map(e=>Number(e.dataset.id));
+  // کارتەکانی نوێ زیاد بکە — بەپێی ڕیزی درووستی
   meals.forEach((m,i)=>{
-    if(!existingIds.includes(m.id)){
+    const existing2 = grid.querySelector(`[data-id="${m.id}"]`);
+    if(!existing2){
       const div = document.createElement('div');
       div.innerHTML = fn(m,i);
-      grid.appendChild(div.firstElementChild);
+      const newCard = div.firstElementChild;
+      // شوێنی درووستی بدۆزەوە
+      const allCards = [...grid.querySelectorAll('[data-id]')];
+      const nextCard = allCards.find(c=>meals.findIndex(x=>x.id===Number(c.dataset.id)) > i);
+      if(nextCard) grid.insertBefore(newCard, nextCard);
+      else grid.appendChild(newCard);
     }
   });
   grid.dataset.lang = S.lang;
 }
+
 
 }
 
