@@ -982,6 +982,14 @@ function renderSide(){
      }
    });
  }
+track.querySelectorAll('[data-id]').forEach(card=>{
+    const m = MEALS.find(x=>x.id===Number(card.dataset.id));
+    if(!m) return;
+    const nameEl = card.querySelector('.mini-name');
+    const priceEl = card.querySelector('.mini-price');
+    if(nameEl) nameEl.textContent = loc(m.name);
+    if(priceEl) priceEl.textContent = m.price.toLocaleString()+' '+t('currency');
+  });
 }
 
 const IMG_CACHE = {};
