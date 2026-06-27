@@ -20,7 +20,7 @@
   function generate(){
     const exp     = Date.now() + 10 * 60 * 1000; // ١٠ خولەک
     const token   = Math.random().toString(36).slice(2);
-    const menuURL = 'https://devmuhamad1991.github.io/Matham/menu.html'; // ✏️ ئەمە بگۆڕە
+const menuURL = 'https://devmuhamad1991.github.io/Matham/menu.html';
     const url     = `${menuURL}?token=${token}&exp=${exp}`;
     
     document.getElementById('qrcode').innerHTML = '';
