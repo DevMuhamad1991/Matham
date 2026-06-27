@@ -958,21 +958,25 @@ const oldIds = [...grid.querySelectorAll('[data-id]')].map(e=>e.dataset.id).join
 const viewChanged = grid.dataset.view !== S.view;
 const langChanged = grid.dataset.lang !== S.lang;
 
-if(newIds !== oldIds || viewChanged){
+if(viewChanged){
   grid.innerHTML = meals.map((m,i)=>fn(m,i)).join('');
   grid.dataset.view = S.view;
   grid.dataset.lang = S.lang;
-} else if(langChanged){
-  grid.dataset.lang = S.lang;
-  grid.querySelectorAll('[data-id]').forEach(card=>{
-    const id = Number(card.dataset.id);
-    const m = MEALS.find(x=>x.id===id);
-    if(!m) return;
-    const nameEl = card.querySelector('.gc-name, .lc-name');
-    const catEl  = card.querySelector('.lc-cat');
-    if(nameEl) nameEl.textContent = loc(m.name);
-    if(catEl)  catEl.textContent  = t('cat_'+m.cat);
+} else if(newIds !== oldIds){
+  // کارتەکانی نەماون بسرە
+  [...grid.querySelectorAll('[data-id]')].forEach(card=>{
+    if(!meals.find(m=>m.id===Number(card.dataset.id))) card.remove();
   });
+  // کارتەکانی نوێ زیاد بکە
+  const existingIds = [...grid.querySelectorAll('[data-id]')].map(e=>Number(e.dataset.id));
+  meals.forEach((m,i)=>{
+    if(!existingIds.includes(m.id)){
+      const div = document.createElement('div');
+      div.innerHTML = fn(m,i);
+      grid.appendChild(div.firstElementChild);
+    }
+  });
+  grid.dataset.lang = S.lang;
 }
 
 }
