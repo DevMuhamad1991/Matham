@@ -896,8 +896,22 @@ function renderSide(){
   const currentIds = [...track.querySelectorAll('[data-id]')].map(e=>Number(e.dataset.id));
   const newIds = favMs.map(m=>m.id);
   const changed = JSON.stringify(currentIds) !== JSON.stringify(newIds);
-  if(changed) track.innerHTML = favMs.map(miniCard).join('');
+
+if(changed){
+  // کارتەکانی نەماون بسرە
+  [...track.querySelectorAll('[data-id]')].forEach(card=>{
+    if(!favMs.find(m=>m.id===Number(card.dataset.id))) card.remove();
+  });
+  // کارتەکانی نوێ زیاد بکە
+  favMs.forEach(m=>{
+    if(!track.querySelector(`[data-id="${m.id}"]`)){
+      const div = document.createElement('div');
+      div.innerHTML = miniCard(m);
+      track.appendChild(div.firstElementChild);
+    }
+  });
 }
+
 
 const IMG_CACHE = {};
 function cachedImg(src, alt, cls){
