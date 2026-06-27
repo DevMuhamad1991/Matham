@@ -8,6 +8,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <!-- وێنەی ٤ خواردنی یەکەم preload بکە -->
+  <link rel="preload" as="image" href="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=700&q=80&fm=webp">
+  <link rel="preload" as="image" href="https://images.unsplash.com/photo-1553979459-d2229ba7433b?w=700&q=80&fm=webp">
+  <link rel="preload" as="image" href="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=700&q=80&fm=webp">
+  <link rel="preload" as="image" href="https://images.unsplash.com/photo-1628840042765-356cda07504e?w=700&q=80&fm=webp">
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 <style>
@@ -53,9 +58,10 @@ body{
   -webkit-font-smoothing:antialiased;
 }
 body.lang-en{
-  --font-display: Georgia, serif;
-  --font-ui: system-ui, sans-serif;
+  --font-display: 'Noto Sans Arabic', Georgia, serif;
+  --font-ui: 'Noto Sans Arabic', system-ui, sans-serif;
 }
+
 img{display:block;width:100%;height:100%;object-fit:cover}
 button{cursor:pointer;border:none;background:none;font-family:inherit;font-size:inherit;color:inherit}
 input{font-family:inherit;font-size:inherit}
@@ -178,9 +184,6 @@ flex-direction:row;
   margin:-4px auto 0;
 }
 
-body.lang-en .nav-brand{
-  font-family: system-ui, sans-serif;
-}
 .lpb{
   font-family: system-ui, sans-serif !important;
 }
@@ -527,6 +530,11 @@ body.lang-ar  .modal-name{font-family:'Noto Naskh Arabic','Cormorant Garamond',s
 
 .gc-img img, .lc-img img { content-visibility: auto; }
 .gcard.hidden, .lcard.hidden{display:none!important;}
+
+/* لە خانەی :root یا کۆتایی CSS */
+.modal-name {
+  font-family: 'Noto Sans Arabic', Georgia, serif !important;
+}
 
 </style>
 </head>
@@ -974,6 +982,14 @@ function renderSide(){
      }
    });
  }
+track.querySelectorAll('[data-id]').forEach(card=>{
+    const m = MEALS.find(x=>x.id===Number(card.dataset.id));
+    if(!m) return;
+    const nameEl = card.querySelector('.mini-name');
+    const priceEl = card.querySelector('.mini-price');
+    if(nameEl) nameEl.textContent = loc(m.name);
+    if(priceEl) priceEl.textContent = m.price.toLocaleString()+' '+t('currency');
+  });
 }
 
 const IMG_CACHE = {};
@@ -1197,14 +1213,26 @@ document.getElementById('catsTrack').addEventListener('keydown', e=>{
 
 /* Menu card / fav clicks */
 document.getElementById('menuGrid').addEventListener('click', e=>{
-  const fav = e.target.closest('[data-fav]');
-  if(fav){ e.stopPropagation(); toggleFav(Number(fav.dataset.fav)); return; }
-  const card = e.target.closest('[data-id]');
-  if(card) openModal(Number(card.dataset.id));
+ const fav = e.target.closest('[data-fav]');
+ if(fav){ e.stopPropagation(); toggleFav(Number(fav.dataset.fav)); return; }
+ const card = e.target.closest('[data-id]');
+ if(card) openModal(Number(card.dataset.id));
 });
 document.getElementById('menuGrid').addEventListener('keydown', e=>{
-  if(e.key==='Enter'){ const card=e.target.closest('[data-id]'); if(card) openModal(Number(card.dataset.id)); }
+ if(e.key==='Enter'){ const card=e.target.closest('[data-id]'); if(card) openModal(Number(card.dataset.id)); }
 });
+
+/* ✅ List View — نوێ زیادکرا */
+document.getElementById('menuList').addEventListener('click', e=>{
+ const fav = e.target.closest('[data-fav]');
+ if(fav){ e.stopPropagation(); toggleFav(Number(fav.dataset.fav)); return; }
+ const card = e.target.closest('[data-id]');
+ if(card) openModal(Number(card.dataset.id));
+});
+document.getElementById('menuList').addEventListener('keydown', e=>{
+ if(e.key==='Enter'){ const card=e.target.closest('[data-id]'); if(card) openModal(Number(card.dataset.id)); }
+});
+
 
 /* Side section clicks */
 [document.getElementById('favTrack'), document.getElementById('recentTrack')].forEach(el=>{
