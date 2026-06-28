@@ -746,149 +746,133 @@ const CATS = [
 ════════════════════════════════════════════════════════════════ */
 const MEALS = [
 
-  {
-    id: 1,
-    cat: 'pizza',
-    img: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=700&q=80&fm=webp',
-    name: { ckb: 'پیتزا گەورە عایلی', ar: 'بيتزا عائلية كبيرة', en: 'Large Family Pizza' },
-    desc: { ckb: 'پیتزای گەورە بۆ هەموو خێزان بە پەنیری زۆر و تامی خۆش', ar: 'بيتزا عائلية كبيرة مع جبنة وفيرة', en: 'Large family-size pizza with extra cheese' },
-    price: 18000, cal: 1800, prep: 25
-  },
+  {id:2, cat:'pizza',
+   img:'https://images.unsplash.com/photo-1594007654729-407eedc4be65?w=700&q=80&fm=webp',
+   name:{ckb:'پیتزا گەورە عایلی',ar:'بيتزا عائلية كبيرة',en:'Large Family Pizza'},
+   desc:{ckb:'پیتزای گەورە گونجاو بۆ هەموو خێزان بە پەنیر و سۆس و تۆپینگە جیاوازەکان',
+         ar:'بيتزا عائلية كبيرة مع الجبن والصلصة وتشكيلة من الإضافات',
+         en:'Large family-size pizza with cheese, sauce and assorted toppings'},
+   price:18000, cal:1800, prep:25},
 
-  {
-    id: 2,
-    cat: 'pizza',
-    img: 'https://images.unsplash.com/photo-1594007654729-407eedc4be65?w=700&q=80&fm=webp',
-    name: { ckb: 'پیتزا تایبەت شێف', ar: 'بيتزا الشيف الخاصة', en: 'Chef Special Pizza' },
-    desc: { ckb: 'تێکەڵەی گۆشت، مریشک، سۆسیج و پەنیر', ar: 'خليط من اللحم والدجاج والسجق والجبن', en: 'Special mix of beef, chicken, sausage and cheese' },
-    price: 16000, cal: 1400, prep: 22
-  },
+  {id:3, cat:'pizza',
+   img:'https://images.unsplash.com/photo-1571407970349-bc81e7e96d47?w=700&q=80&fm=webp',
+   name:{ckb:'پیتزا تایبەت شێف',ar:'بيتزا الشيف الخاصة',en:'Chef Special Pizza'},
+   desc:{ckb:'تێکەڵەی تایبەتی شێف لە گوشت و پەنیر و سۆسی تایبەت',
+         ar:'خلطة الشيف الخاصة من اللحم والجبن والصلصة',
+         en:'Chef signature pizza with premium meat, cheese and special sauce'},
+   price:14000, cal:980, prep:20},
 
-  {
-    id: 3,
-    cat: 'pizza',
-    img: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=700&q=80&fm=webp',
-    name: { ckb: 'پیتزا مریشک ناوەند', ar: 'بيتزا دجاج وسط', en: 'Medium Chicken Pizza' },
-    desc: { ckb: 'مریشکی فرێش، پەنیر و سووسی تایبەت', ar: 'دجاج طازج مع جبنة وصلصة خاصة', en: 'Fresh chicken with cheese and special sauce' },
-    price: 9000, cal: 850, prep: 18
-  },
+  {id:4, cat:'pizza',
+   img:'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=700&q=80&fm=webp',
+   name:{ckb:'پیتزا مریشک ناوەند',ar:'بيتزا دجاج وسط',en:'Medium Chicken Pizza'},
+   desc:{ckb:'مریشکی فرێش، پەنیر موزارێلا و سۆسی تایبەت',
+         ar:'دجاج طازج مع جبنة موزاريلا وصلصة خاصة',
+         en:'Fresh chicken, mozzarella and special pizza sauce'},
+   price:9000, cal:760, prep:18},
 
-  {
-    id: 4,
-    cat: 'pizza',
-    img: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=700&q=80&fm=webp',
-    name: { ckb: 'پیتزا مریشک گەورە', ar: 'بيتزا دجاج كبيرة', en: 'Large Chicken Pizza' },
-    desc: { ckb: 'مریشکی فرێش و پەنیری موزارێلا', ar: 'دجاج طازج مع جبنة موزاريلا', en: 'Fresh chicken with mozzarella cheese' },
-    price: 14000, cal: 1300, prep: 22
-  },
+  {id:5, cat:'pizza',
+   img:'https://images.unsplash.com/photo-1604382355076-af4b0eb60143?w=700&q=80&fm=webp',
+   name:{ckb:'پیتزا مریشک گەورە',ar:'بيتزا دجاج كبيرة',en:'Large Chicken Pizza'},
+   desc:{ckb:'پیتزای گەورەی مریشک بە پەنیر و سۆسی تایبەت',
+         ar:'بيتزا دجاج كبيرة مع الجبن والصلصة الخاصة',
+         en:'Large chicken pizza with mozzarella and signature sauce'},
+   price:13000, cal:1120, prep:22},
 
-  {
-    id: 5,
-    cat: 'pizza',
-    img: 'https://images.unsplash.com/photo-1548365328-9f547fb0953b?w=700&q=80&fm=webp',
-    name: { ckb: 'پیتزا گۆشتی گەورە', ar: 'بيتزا لحم كبيرة', en: 'Large Beef Pizza' },
-    desc: { ckb: 'گۆشتی تازە لەگەڵ پەنیر و سووسی تایبەت', ar: 'لحم طازج مع الجبن والصلصة الخاصة', en: 'Fresh beef with cheese and special sauce' },
-    price: 15000, cal: 1350, prep: 22
-  },
+  {id:6, cat:'pizza',
+   img:'https://images.unsplash.com/photo-1511689660979-10d2b1aada49?w=700&q=80&fm=webp',
+   name:{ckb:'پیتزا گۆشتی گەورە',ar:'بيتزا لحم كبيرة',en:'Large Beef Pizza'},
+   desc:{ckb:'گۆشتی تازە لەگەڵ پەنیر و سۆسی تۆمات',
+         ar:'لحم طازج مع الجبن وصلصة الطماطم',
+         en:'Fresh beef with mozzarella and tomato sauce'},
+   price:14000, cal:1180, prep:22},
 
-  {
-    id: 6,
-    cat: 'pizza',
-    img: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=700&q=80&fm=webp',
-    name: { ckb: 'پیتزا گۆشتی ناوەند', ar: 'بيتزا لحم وسط', en: 'Medium Beef Pizza' },
-    desc: { ckb: 'گۆشتی تازە و پەنیر موزارێلا', ar: 'لحم طازج مع جبنة موزاريلا', en: 'Fresh beef with mozzarella cheese' },
-    price: 10000, cal: 900, prep: 18
-  },
+  {id:7, cat:'pizza',
+   img:'https://images.unsplash.com/photo-1541745537411-b8046dc6d66c?w=700&q=80&fm=webp',
+   name:{ckb:'پیتزا گۆشتی ناوەند',ar:'بيتزا لحم وسط',en:'Medium Beef Pizza'},
+   desc:{ckb:'گۆشتی تازە و پەنیر موزارێلا',
+         ar:'لحم طازج مع جبنة موزاريلا',
+         en:'Fresh beef with mozzarella cheese'},
+   price:10000, cal:820, prep:18},
 
-  {
-    id: 7,
-    cat: 'pizza',
-    img: 'https://images.unsplash.com/photo-1511689660979-10d2b1aada49?w=700&q=80&fm=webp',
-    name: { ckb: 'پیتزا حەزرەواتی گەورە', ar: 'بيتزا خضار كبيرة', en: 'Large Vegetable Pizza' },
-    desc: { ckb: 'فلفل، قارچک، زەیتوون و پیاز', ar: 'فلفل، فطر، زيتون وبصل', en: 'Bell pepper, mushrooms, olives and onion' },
-    price: 13000, cal: 1100, prep: 20
-  },
+  {id:8, cat:'pizza',
+   img:'https://images.unsplash.com/photo-1511689660979-10d2b1aada49?w=700&q=80&fm=webp',
+   name:{ckb:'پیتزا حەزرەواتی',ar:'بيتزا خضار كبيرة',en:'Large Vegetable Pizza'},
+   desc:{ckb:'تێکەڵەی حەزرەواتی فرێش لەگەڵ پەنیر موزارێلا',
+         ar:'تشكيلة خضار طازجة مع جبنة موزاريلا',
+         en:'Fresh mixed vegetables with mozzarella cheese'},
+   price:11000, cal:690, prep:17},
 
-  {
-    id: 8,
-    cat: 'pizza',
-    img: 'https://images.unsplash.com/photo-1571407970349-bc81e7e96d47?w=700&q=80&fm=webp',
-    name: { ckb: 'پیتزا حەزرەواتی ناوەند', ar: 'بيتزا خضار وسط', en: 'Medium Vegetable Pizza' },
-    desc: { ckb: 'حەزرەواتی فرێش لەگەڵ پەنیر', ar: 'خضار طازجة مع الجبن', en: 'Fresh vegetables with cheese' },
-    price: 8500, cal: 780, prep: 17
-  },
+  {id:9, cat:'pizza',
+   img:'https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?w=700&q=80&fm=webp',
+   name:{ckb:'پیتزا حەزرەواتی ناوەند',ar:'بيتزا خضار وسط',en:'Medium Vegetable Pizza'},
+   desc:{ckb:'حەزرەواتی فرێش و سۆسی تایبەت',
+         ar:'خضار طازجة مع صلصة خاصة',
+         en:'Fresh vegetables with signature sauce'},
+   price:8000, cal:580, prep:16},
 
-  {
-    id: 9,
-    cat: 'pizza',
-    img: 'https://images.unsplash.com/photo-1604382355076-af4b0eb60143?w=700&q=80&fm=webp',
-    name: { ckb: 'پیتزا مارگەریتی گەورە', ar: 'بيتزا مارغريتا كبيرة', en: 'Large Margherita Pizza' },
-    desc: { ckb: 'سووسی تۆماتە، موزارێلا و ریحان', ar: 'صلصة طماطم، موزاريلا وريحان', en: 'Tomato sauce, mozzarella and basil' },
-    price: 12000, cal: 1050, prep: 18
-  },
+  {id:10, cat:'pizza',
+   img:'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=700&q=80&fm=webp',
+   name:{ckb:'پیتزا مارگەریتی گەورە',ar:'بيتزا مارغريتا كبيرة',en:'Large Margherita Pizza'},
+   desc:{ckb:'پەنیر موزارێلا و سۆسی تۆمات و ریحان',
+         ar:'جبنة موزاريلا وصلصة طماطم وريحان',
+         en:'Mozzarella, tomato sauce and fresh basil'},
+   price:11000, cal:840, prep:17},
 
-  {
-    id: 10,
-    cat: 'pizza',
-    img: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=700&q=80&fm=webp',
-    name: { ckb: 'پیتزا مارگەریتی ناوەند', ar: 'بيتزا مارغريتا وسط', en: 'Medium Margherita Pizza' },
-    desc: { ckb: 'سووسی تۆماتە و موزارێلا', ar: 'صلصة طماطم وموزاريلا', en: 'Tomato sauce and mozzarella' },
-    price: 8000, cal: 720, prep: 15
-  },
+  {id:11, cat:'pizza',
+   img:'https://images.unsplash.com/photo-1600628422019-6e8f4d8f5d3e?w=700&q=80&fm=webp',
+   name:{ckb:'پیتزا مارگەریتی ناوەند',ar:'بيتزا مارغريتا وسط',en:'Medium Margherita Pizza'},
+   desc:{ckb:'مارگەریتای کلاسیکی بە پەنیر موزارێلا',
+         ar:'مارغريتا كلاسيكية بجبنة موزاريلا',
+         en:'Classic Margherita with mozzarella cheese'},
+   price:7500, cal:640, prep:15},
 
-  {
-    id: 11,
-    cat: 'pizza',
-    img: 'https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?w=700&q=80&fm=webp',
-    name: { ckb: 'پیتزا مشەکەلی گەورە', ar: 'بيتزا مشكلة كبيرة', en: 'Large Mixed Pizza' },
-    desc: { ckb: 'تێکەڵەی گۆشت، مریشک، سۆسیج و حەزرەوات', ar: 'تشكيلة من اللحم والدجاج والخضار', en: 'Mixed beef, chicken and vegetables' },
-    price: 16000, cal: 1450, prep: 23
-  },
+  {id:12, cat:'pizza',
+   img:'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=700&q=80&fm=webp',
+   name:{ckb:'پیتزا مشەکەلی گەورە',ar:'بيتزا مشكلة كبيرة',en:'Large Mixed Pizza'},
+   desc:{ckb:'تێکەڵەی گۆشت و مریشک و حەزرەوات',
+         ar:'خليط من اللحم والدجاج والخضار',
+         en:'Mixed beef, chicken and vegetables'},
+   price:15000, cal:1240, prep:23},
 
-  {
-    id: 12,
-    cat: 'pizza',
-    img: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=700&q=80&fm=webp',
-    name: { ckb: 'پیتزا مشەکەلی ناوەند', ar: 'بيتزا مشكلة وسط', en: 'Medium Mixed Pizza' },
-    desc: { ckb: 'تێکەڵەی گۆشت و مریشک و حەزرەوات', ar: 'تشكيلة من اللحم والدجاج والخضار', en: 'Mixed beef, chicken and vegetables' },
-    price: 11000, cal: 980, prep: 19
-  },
+  {id:13, cat:'pizza',
+   img:'https://images.unsplash.com/photo-1590947132387-155cc02f3212?w=700&q=80&fm=webp',
+   name:{ckb:'پیتزا مشەکەلی ناوەند',ar:'بيتزا مشكلة وسط',en:'Medium Mixed Pizza'},
+   desc:{ckb:'تێکەڵەی گوشت و مریشک و پەنیر',
+         ar:'خليط من اللحم والدجاج والجبن',
+         en:'Mixed beef, chicken and cheese'},
+   price:11000, cal:920, prep:19},
 
-  {
-    id: 13,
-    cat: 'pizza',
-    img: 'https://images.unsplash.com/photo-1579631542720-3a87824fff86?w=700&q=80&fm=webp',
-    name: { ckb: 'پیتزا ماسی گەورە', ar: 'بيتزا تونة كبيرة', en: 'Large Tuna Pizza' },
-    desc: { ckb: 'تونا، زەیتوون و موزارێلا', ar: 'تونة، زيتون وموزاريلا', en: 'Tuna, olives and mozzarella' },
-    price: 15000, cal: 1250, prep: 20
-  },
+  {id:14, cat:'pizza',
+   img:'https://images.unsplash.com/photo-1585238342024-78d387f4a707?w=700&q=80&fm=webp',
+   name:{ckb:'پیتزا ماسی گەورە',ar:'بيتزا تونة كبيرة',en:'Large Tuna Pizza'},
+   desc:{ckb:'تۆنەی فرێش، پەنیر و زەیتوون',
+         ar:'تونة طازجة مع الجبن والزيتون',
+         en:'Fresh tuna with mozzarella and olives'},
+   price:14500, cal:1080, prep:21},
 
-  {
-    id: 14,
-    cat: 'pizza',
-    img: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=700&q=80&fm=webp',
-    name: { ckb: 'پیتزا ماسی ناوەند', ar: 'بيتزا تونة وسط', en: 'Medium Tuna Pizza' },
-    desc: { ckb: 'تونا و پەنیر موزارێلا', ar: 'تونة مع جبنة موزاريلا', en: 'Tuna with mozzarella cheese' },
-    price: 10500, cal: 900, prep: 18
-  },
+  {id:15, cat:'pizza',
+   img:'https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?w=700&q=80&fm=webp',
+   name:{ckb:'پیتزا ماسی ناوەند',ar:'بيتزا تونة وسط',en:'Medium Tuna Pizza'},
+   desc:{ckb:'تۆنەی فرێش و پەنیر موزارێلا',
+         ar:'تونة طازجة مع جبنة موزاريلا',
+         en:'Fresh tuna with mozzarella cheese'},
+   price:11000, cal:820, prep:18},
 
-  {
-    id: 15,
-    cat: 'pizza',
-    img: 'https://images.unsplash.com/photo-1628840042765-356cda07504e?w=700&q=80&fm=webp',
-    name: { ckb: 'پیتزا پپرۆنی گەورە', ar: 'بيتزا بيبروني كبيرة', en: 'Large Pepperoni Pizza' },
-    desc: { ckb: 'پپرۆنی، موزارێلا و سووسی تۆماتە', ar: 'بيبروني، موزاريلا وصلصة طماطم', en: 'Pepperoni, mozzarella and tomato sauce' },
-    price: 15500, cal: 1400, prep: 20
-  },
+  {id:16, cat:'pizza',
+   img:'https://images.unsplash.com/photo-1628840042765-356cda07504e?w=700&q=80&fm=webp',
+   name:{ckb:'پیتزا پپرۆنی گەورە',ar:'بيتزا بيبروني كبيرة',en:'Large Pepperoni Pizza'},
+   desc:{ckb:'پپرۆنی، پەنیر موزارێلا و سۆسی تایبەت',
+         ar:'بيبروني مع جبنة موزاريلا وصلصة خاصة',
+         en:'Pepperoni with mozzarella and signature sauce'},
+   price:14500, cal:1200, prep:21},
 
-  {
-    id: 16,
-    cat: 'pizza',
-    img: 'https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?w=700&q=80&fm=webp',
-    name: { ckb: 'پیتزا پپرۆنی ناوەند', ar: 'بيتزا بيبروني وسط', en: 'Medium Pepperoni Pizza' },
-    desc: { ckb: 'پپرۆنی و پەنیری موزارێلا', ar: 'بيبروني مع جبنة موزاريلا', en: 'Pepperoni with mozzarella cheese' },
-    price: 11500, cal: 980, prep: 18
-  }
+  {id:17, cat:'pizza',
+   img:'https://images.unsplash.com/photo-1618213834938-6f48b5f5a8d0?w=700&q=80&fm=webp',
+   name:{ckb:'پیتزا پپرۆنی ناوەند',ar:'بيتزا بيبروني وسط',en:'Medium Pepperoni Pizza'},
+   desc:{ckb:'پپرۆنی و پەنیر موزارێلا',
+         ar:'بيبروني مع جبنة موزاريلا',
+         en:'Pepperoni with mozzarella cheese'},
+   price:11000, cal:890, prep:18},
 
 ];
 
