@@ -1,34 +1,1274 @@
 <!DOCTYPE html>
-<html>
+<html lang="ckb" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <title>QR Generator</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ئاراش فاست فوود</title>
+<meta name="description" content="مێنووی دیجیتاڵی ئاراش فاست فوود — خواردنی باش، ئەمڕۆ"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <!-- وێنەی ٤ خواردنی یەکەم preload بکە -->
+  <link rel="preload" as="image" href="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=700&q=80&fm=webp">
+  <link rel="preload" as="image" href="https://images.unsplash.com/photo-1553979459-d2229ba7433b?w=700&q=80&fm=webp">
+  <link rel="preload" as="image" href="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=700&q=80&fm=webp">
+  <link rel="preload" as="image" href="https://images.unsplash.com/photo-1628840042765-356cda07504e?w=700&q=80&fm=webp">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   TOKENS
+═══════════════════════════════════════════════════════════════ */
+:root{
+  --ink:	   #2C0D0D;   /* deepest base */
+  --bg:		#3B1111;   /* page background */
+  --layer1:	#4E1A1A;   /* cards, panels */
+  --layer2:	#5E2020;   /* elevated surfaces */
+  --layer3:	#6E2828;   /* hover, pressed */
+  --gold:	  #D4AF37;
+  --gold-dim:  #B8932E;
+  --gold-faint:rgba(212,175,55,.12);
+  --cream:	 #F5E8C8;
+  --muted:	 #C4A882;
+  --faint:	 #856B50;
+  --glass:	 rgba(46,13,13,.65);
+  --ring:	  rgba(212,175,55,.45);
+  --r-sm:  10px;
+  --r-md:  18px;
+  --r-lg:  26px;
+  --r-xl:  36px;
+  --ease:  cubic-bezier(.4,0,.2,1);
+  --t:	 .26s;
+  --sh-sm: 0 2px 14px rgba(0,0,0,.32);
+  --sh-md: 0 8px 32px rgba(0,0,0,.44);
+  --sh-lg: 0 20px 64px rgba(0,0,0,.58);
+--font-display: 'Noto Sans Arabic', Georgia, serif;
+--font-ui:      'Noto Sans Arabic', system-ui, sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg);
+  color:var(--cream);
+  font-family:var(--font-ui);
+  font-size:15px;
+  line-height:1.6;
+  min-height:100vh;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+body.lang-en{
+  --font-display: 'Noto Sans Arabic', Georgia, serif;
+  --font-ui: 'Noto Sans Arabic', system-ui, sans-serif;
+}
+
+img{display:block;width:100%;height:100%;object-fit:cover}
+button{cursor:pointer;border:none;background:none;font-family:inherit;font-size:inherit;color:inherit}
+input{font-family:inherit;font-size:inherit}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--layer3);border-radius:99px}
+
+/* ═══════════════════════════════════════════════════════════════
+   NAV BAR
+═══════════════════════════════════════════════════════════════ */
+.nav{
+  position:sticky;top:0;z-index:120;
+  background:var(--glass);
+  backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+  border-bottom:1px solid rgba(212,175,55,.12);
+  padding:0 16px;
+  height:60px;
+display:flex;align-items:center;justify-content:space-between;gap:12px;
+flex-direction:row;
+}
+.nav-left,.nav-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+/* search icon btn */
+.nav-icon-btn{
+  width:38px;height:38px;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:var(--r-sm);
+  color:var(--muted);font-size:16px;
+  transition:background var(--t) var(--ease),color var(--t) var(--ease);
+}
+.nav-icon-btn:hover{background:var(--layer2);color:var(--cream)}
+/* brand */
+.nav-brand{
+  font-family:var(--font-display);
+  font-size:18px;font-weight:700;
+  color:var(--gold);
+  letter-spacing:.4px;
+  white-space:nowrap;
+  flex-shrink:0;
+}
+
+
+/* lang pill */
+.lang-pill{
+  display:flex;gap:2px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(212,175,55,.15);
+  border-radius:99px;padding:3px;
+}
+.lpb{
+  padding:4px 9px;border-radius:99px;
+  font-size:11px;font-weight:600;letter-spacing:.4px;
+  color:var(--faint);
+  transition:all var(--t) var(--ease);
+}
+.lpb.on{background:var(--gold);color:var(--ink)}
+.lpb:hover:not(.on){color:var(--cream);background:rgba(255,255,255,.08)}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   CATEGORY SLIDER  — image-tile style like the reference
+═══════════════════════════════════════════════════════════════ */
+.cats-wrap{padding:4px 0 20px;position:relative}
+.cats-track{
+  display:flex;gap:12px;
+  overflow-x:auto;
+  padding:6px 16px 10px;
+  scroll-snap-type:x mandatory;
+  scrollbar-width:none;
+  -webkit-overflow-scrolling:touch;
+}
+.cats-track::-webkit-scrollbar{display:none}
+.cat-tile{
+  flex-shrink:0;scroll-snap-align:start;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  cursor:pointer;
+  width:74px;
+}
+.cat-img-ring{
+  width:66px;height:66px;border-radius:50%;
+  border:2.5px solid transparent;
+  padding:3px;
+  background:
+	linear-gradient(var(--layer1),var(--layer1)) padding-box,
+	rgba(255,255,255,.12) border-box;
+  transition:all var(--t) var(--ease);
+  position:relative;
+}
+.cat-tile.on .cat-img-ring{
+  background:
+	linear-gradient(var(--layer1),var(--layer1)) padding-box,
+	var(--gold) border-box;
+  box-shadow:0 0 0 3px rgba(212,175,55,.18),var(--sh-sm);
+}
+.cat-img-inner{
+  width:100%;height:100%;border-radius:50%;overflow:hidden;
+  background:var(--layer2);
+}
+/* "All" tile uses icon instead of photo */
+.cat-icon-circle{
+  width:100%;height:100%;border-radius:50%;
+  background:var(--layer2);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--muted);font-size:22px;
+  transition:color var(--t);
+}
+.cat-tile.on .cat-icon-circle{color:var(--gold)}
+.cat-label{
+  font-size:11.5px;font-weight:500;
+  color:var(--muted);
+  text-align:center;line-height:1.25;
+  max-width:70px;
+  transition:color var(--t);
+}
+.cat-tile.on .cat-label{color:var(--gold);font-weight:600}
+
+/* active underline dot */
+.cat-tile.on .cat-dot{
+  width:5px;height:5px;border-radius:50%;
+  background:var(--gold);
+  margin:-4px auto 0;
+}
+
+.lpb{
+  font-family: system-ui, sans-serif !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TOOLBAR
+═══════════════════════════════════════════════════════════════ */
+.toolbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 16px 14px;
+}
+.toolbar-left{
+  display:flex;align-items:center;gap:8px;
+}
+.section-label{
+  font-family:var(--font-display);
+  font-size:20px;font-weight:700;
+  color:var(--cream);
+}
+body.lang-ckb .section-label,
+body.lang-ar  .section-label{font-family:'Noto Sans Arabic', serif;}
+.result-pill{
+  background:var(--gold-faint);
+  border:1px solid rgba(212,175,55,.22);
+  color:var(--gold);
+  font-size:11px;font-weight:600;
+  padding:2px 9px;border-radius:99px;
+}
+.view-tog{
+  display:flex;gap:3px;
+  background:var(--layer1);
+  border-radius:var(--r-sm);padding:3px;
+}
+.vbtn{
+  width:32px;height:32px;border-radius:7px;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--faint);font-size:14px;
+  transition:all var(--t) var(--ease);
+}
+.vbtn.on{background:var(--layer3);color:var(--gold)}
+
+/* ═══════════════════════════════════════════════════════════════
+   GRID VIEW CARDS
+═══════════════════════════════════════════════════════════════ */
+.menu-wrap{padding:0 12px 100px}
+.grid-view{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+@media(min-width:560px){.grid-view{grid-template-columns:repeat(3,1fr);gap:14px}}
+@media(min-width:900px){.grid-view{grid-template-columns:repeat(4,1fr);gap:16px}}
+@media(min-width:1200px){.grid-view{grid-template-columns:repeat(5,1fr)}}
+
+.gcard{
+  background:var(--layer1);
+  border-radius:var(--r-md);
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.05);
+  box-shadow:var(--sh-sm);
+  cursor:pointer;
+  transition:transform var(--t) var(--ease),box-shadow var(--t),border-color var(--t);
+  position:relative;
+animation:fadeUp .18s var(--ease) both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.gcard:hover{transform:translateY(-5px);box-shadow:var(--sh-md);border-color:rgba(212,175,55,.22)}
+.gcard:active{transform:translateY(-2px)}
+
+.gc-img{
+  position:relative;
+  aspect-ratio:1/1;
+  overflow:hidden;
+  background:var(--layer2);
+}
+.gc-img img{transition:transform .5s ease}
+.gcard:hover .gc-img img{transform:scale(1.07)}
+
+/* bottom gradient on image */
+.gc-img::after{
+  content:'';
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(44,13,13,.7) 0%,transparent 55%);
+  pointer-events:none;
+}
+/* price floated on image */
+.gc-price-float{
+  position:absolute;bottom:8px;inset-inline-start:10px;z-index:2;
+  font-size:13px;font-weight:600;color:var(--gold);
+  text-shadow:0 1px 4px rgba(0,0,0,.5);
+}
+.gc-fav{
+  position:absolute;top:8px;inset-inline-end:8px;z-index:2;
+  width:30px;height:30px;border-radius:50%;
+  background:rgba(20,5,5,.5);backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--faint);font-size:13px;
+  transition:all var(--t) var(--ease);
+}
+.gc-fav.on{color:#e8224a}
+.gc-fav:hover{transform:scale(1.15);background:rgba(20,5,5,.75)}
+
+.gc-body{padding:10px 12px 14px}
+.gc-name{
+  font-size:13.5px;font-weight:600;
+  color:var(--cream);line-height:1.3;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  margin-bottom:4px;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   LIST VIEW CARDS  — cinematic horizontal
+═══════════════════════════════════════════════════════════════ */
+.list-view{display:flex;flex-direction:column;gap:12px}
+
+.lcard{
+  background:var(--layer1);
+  border-radius:var(--r-md);
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.05);
+  box-shadow:var(--sh-sm);
+  cursor:pointer;
+  display:flex;
+  height:120px;
+  transition:transform var(--t) var(--ease),box-shadow var(--t),border-color var(--t);
+animation:fadeUp .18s var(--ease) both;
+}
+.lcard:hover{transform:translateY(-3px);box-shadow:var(--sh-md);border-color:rgba(212,175,55,.2)}
+@media(min-width:640px){.lcard{height:140px}}
+
+.lc-img{
+  width:36%;flex-shrink:0;
+  position:relative;overflow:hidden;
+  background:var(--layer2);
+}
+.lc-img img{transition:transform .5s ease}
+.lcard:hover .lc-img img{transform:scale(1.06)}
+/* gradient bleeds into card content — the signature effect */
+
+.lc-body{
+  flex:1;padding:14px 16px;
+  display:flex;flex-direction:column;justify-content:space-between;
+  position:relative;
+}
+.lc-cat{
+  font-size:10px;letter-spacing:1px;text-transform:uppercase;
+  color:var(--gold);opacity:.75;margin-bottom:4px;
+}
+.lc-name{
+  font-size:15.5px;font-weight:600;color:var(--cream);line-height:1.28;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+
+.lc-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-top:auto;padding-top:8px;
+}
+.lc-price{font-size:15px;font-weight:700;color:var(--gold)}
+.lc-price-cur{font-size:10.5px;color:var(--faint);font-weight:400;margin-inline-start:3px}
+.lc-fav{
+  width:28px;height:28px;border-radius:50%;
+  background:rgba(212,175,55,.08);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--faint);font-size:12px;
+  transition:all var(--t) var(--ease);
+}
+.lc-fav.on{color:#e8224a}
+.lc-fav:hover{background:rgba(212,175,55,.16);transform:scale(1.12)}
+
+/* ═══════════════════════════════════════════════════════════════
+   SIDE SCROLLS  — favorites / recent
+═══════════════════════════════════════════════════════════════ */
+.side-section{margin-bottom:4px}
+.side-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px 10px;
+}
+.side-head-title{
+  display:flex;align-items:center;gap:8px;
+  font-size:15px;font-weight:600;color:var(--cream);
+}
+.side-head-title i{color:var(--gold);font-size:13px}
+.side-track{
+  display:flex;gap:10px;
+  overflow-x:auto;padding:2px 16px 10px;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch;
+}
+.side-track::-webkit-scrollbar{display:none}
+.mini{
+  flex-shrink:0;width:110px;
+  background:var(--layer1);border-radius:var(--r-sm);overflow:hidden;
+  border:1px solid rgba(255,255,255,.05);
+  cursor:pointer;
+  transition:transform var(--t),box-shadow var(--t);
+}
+.mini:hover{transform:translateY(-3px);box-shadow:var(--sh-sm)}
+.mini-img{width:100%;height:72px;object-fit:cover;display:block;background:var(--layer2)}
+.mini-body{padding:7px 9px 9px}
+.mini-name{font-size:11.5px;font-weight:600;color:var(--cream);
+  display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+.mini-price{font-size:11px;color:var(--gold);margin-top:2px}
+
+/* ═══════════════════════════════════════════════════════════════
+   EMPTY STATE
+═══════════════════════════════════════════════════════════════ */
+.empty{
+  display:none;text-align:center;padding:64px 24px;
+}
+.empty.on{display:block}
+.empty-icon{font-size:52px;color:var(--faint);margin-bottom:18px}
+.empty-title{font-size:18px;font-weight:600;color:var(--muted);margin-bottom:6px}
+.empty-sub{font-size:13px;color:var(--faint)}
+
+/* ═══════════════════════════════════════════════════════════════
+   MODAL  — bottom sheet → centered on wide screens
+═══════════════════════════════════════════════════════════════ */
+.overlay{
+  position:fixed;inset:0;z-index:300;
+  background:rgba(20,4,4,.85);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  display:flex;align-items:flex-end;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity var(--t) var(--ease);
+}
+.overlay.open{opacity:1;pointer-events:auto}
+@media(min-width:600px){.overlay{align-items:center}}
+.modal{
+  width:100%;max-width:540px;
+  background:var(--layer1);
+  border-radius:var(--r-xl) var(--r-xl) 0 0;
+  overflow:hidden;
+  box-shadow:var(--sh-lg);
+  max-height:92vh;
+  display:flex;flex-direction:column;
+  transform:translateY(50px);
+  transition:transform .32s var(--ease);
+}
+@media(min-width:600px){
+  .modal{border-radius:var(--r-xl);max-height:88vh;transform:translateY(16px) scale(.97)}
+}
+.overlay.open .modal{transform:none}
+
+.modal-img-wrap{
+  position:relative;
+  height:250px;flex-shrink:0;
+  background:var(--layer2);
+}
+@media(min-width:600px){.modal-img-wrap{height:300px}}
+.modal-img-wrap img{width:100%;height:100%;object-fit:cover}
+/* gradient over image bottom */
+.modal-img-wrap::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(to top,var(--layer1) 0%,rgba(44,13,13,.3) 55%,transparent 100%);
+  pointer-events:none;
+}
+.modal-img-actions{
+  position:absolute;top:14px;inset-inline-end:14px;
+  display:flex;gap:8px;z-index:2;
+}
+.modal-act-btn{
+  width:38px;height:38px;border-radius:50%;
+  background:rgba(20,5,5,.55);backdrop-filter:blur(10px);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--cream);font-size:16px;
+  transition:all var(--t) var(--ease);
+}
+.modal-act-btn:hover{background:rgba(20,5,5,.85);transform:scale(1.08)}
+.modal-act-btn.fav-on{color:#e8224a}
+/* cat badge on image */
+.modal-cat-badge{
+  position:absolute;bottom:18px;inset-inline-start:18px;z-index:2;
+  background:rgba(212,175,55,.18);
+  border:1px solid rgba(212,175,55,.35);
+  color:var(--gold);
+  font-size:10.5px;letter-spacing:.9px;text-transform:uppercase;
+  padding:4px 13px;border-radius:99px;
+  backdrop-filter:blur(6px);
+}
+.modal-body{padding:20px 22px 36px;overflow-y:auto;flex:1}
+.modal-name{
+  font-family:var(--font-display);
+  font-size:26px;font-weight:700;color:var(--cream);
+  line-height:1.18;margin-bottom:10px;
+}
+body.lang-ckb .modal-name,
+body.lang-ar  .modal-name{font-family:'Noto Naskh Arabic','Cormorant Garamond',serif}
+.modal-rule{height:1px;background:linear-gradient(to var(--rule-end,right),rgba(212,175,55,.25),transparent);margin-bottom:18px}
+[dir=rtl] .modal-rule{--rule-end:left}
+.modal-chips{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px}
+.mchip{
+  display:flex;align-items:center;gap:6px;
+  background:var(--layer2);border-radius:var(--r-sm);
+  padding:9px 16px;font-size:13px;color:var(--muted);
+}
+.mchip i{color:var(--gold);font-size:13px}
+.modal-price-row{
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--layer2);
+  border-radius:var(--r-md);
+  padding:16px 20px;
+  border:1px solid rgba(212,175,55,.12);
+}
+.mpr-label{font-size:13px;color:var(--muted)}
+.mpr-val{font-size:28px;font-weight:700;color:var(--gold)}
+.mpr-cur{font-size:13px;color:var(--faint);margin-inline-start:5px}
+
+/* ═══════════════════════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════════════════════ */
+.toast-wrap{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  z-index:500;pointer-events:none;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+}
+.toast{
+  background:var(--layer2);
+  border:1px solid rgba(212,175,55,.2);
+  color:var(--cream);
+  padding:10px 20px;border-radius:99px;
+  font-size:13px;white-space:nowrap;
+  box-shadow:var(--sh-md);
+  opacity:0;transform:translateY(10px);
+  transition:opacity .28s,transform .28s;
+}
+.toast.show{opacity:1;transform:none}
+
+/* ═══════════════════════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════════════════════ */
+.footer{
+  text-align:center;padding:24px 16px;
+  border-top:1px solid rgba(255,255,255,.05);
+  font-size:12px;color:var(--faint);
+}
+.footer span{color:var(--gold)}
+
+/* ═══════════════════════════════════════════════════════════════
+   REDUCED MOTION
+═══════════════════════════════════════════════════════════════ */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important}
+}
+
+.gc-img img, .lc-img img { content-visibility: auto; }
+.gcard.hidden, .lcard.hidden{display:none!important;}
+
+/* لە خانەی :root یا کۆتایی CSS */
+.modal-name {
+  font-family: 'Noto Sans Arabic', Georgia, serif !important;
+}
+
+</style>
 </head>
-<body style="text-align:center;padding:40px;background:#3B1111;color:#F5E8C8">
+<body class="lang-ckb" dir="rtl">
 
-  <h2>دووبارە سکان بکەوە </h2>
-  <button onclick="generate()" 
-    style="padding:12px 24px;background:#D4AF37;border:none;
-           border-radius:8px;font-size:16px;cursor:pointer;margin:16px">
-    QR دروست بکە (١٠ خولەک)
-  </button>
+<!-- ════════════════ NAV ════════════════ -->
+<header class="nav" role="banner">
+<div class="nav-brand" style="flex:0;white-space:nowrap">
+  <i class="fa-solid fa-burger" style="font-size:18px;margin-inline-end:8px"></i>
+  Arash FastFood
+</div>
+  <div class="nav-right" style="margin-inline-start:auto">
+	<!-- view toggle in nav on very small screens hidden here, shown in toolbar -->
+	<div class="lang-pill" role="group" aria-label="Language">
+  <button class="lpb on" data-lang="ckb" aria-pressed="true">کوردی</button>
+<button class="lpb" data-lang="ar"  aria-pressed="false">عربي</button>
+<button class="lpb" data-lang="en"  aria-pressed="false">English</button>
+	</div>
+  </div>
+</header>
+
+
+<main>
+
+
+<!-- ════════════════ CATEGORIES ════════════════ -->
+<section class="cats-wrap" aria-label="Categories">
+  <div class="cats-track" id="catsTrack" role="list">
+	<!-- injected -->
+  </div>
+</section>
+
+<!-- ════════════════ FAVORITES ════════════════ -->
+<section class="side-section" id="favSec" style="display:none">
+  <div class="side-head">
+	<div class="side-head-title">
+<i class="fa-solid fa-basket-shopping" aria-hidden="true"></i>
+<span data-i18n="favorites">سەبەتە</span>
+<span id="cartTotal" style="color:var(--gold);font-size:13px;margin-inline-start:8px"></span>
+	</div>
+  </div>
+  <div class="side-track" id="favTrack" role="list"></div>
+</section>
+
+<!-- ════════════════ RECENTLY VIEWED ════════════════ -->
+<section class="side-section" id="recentSec" style="display:none">
+  <div class="side-head">
+	<div class="side-head-title">
+	  <i class="fa-regular fa-clock" aria-hidden="true"></i>
+	  <span data-i18n="recently_viewed">دوا بینراوەکان</span>
+	</div>
+  </div>
+  <div class="side-track" id="recentTrack" role="list"></div>
+</section>
+
+<!-- ════════════════ TOOLBAR ════════════════ -->
+<div class="toolbar">
+  <div class="toolbar-left">
+	<span class="section-label" data-i18n="all_meals">هەموو خواردنەکان</span>
+	<span class="result-pill" id="rCount" aria-live="polite">0</span>
+  </div>
+  <div class="view-tog" role="group" aria-label="View mode">
+	<button class="vbtn on" id="gBtn" aria-pressed="true" title="Grid">
+	  <i class="fa-solid fa-grip"></i>
+	</button>
+	<button class="vbtn" id="lBtn" aria-pressed="false" title="List">
+	  <i class="fa-solid fa-list"></i>
+	</button>
+  </div>
+</div>
+
+<!-- ════════════════ MENU ════════════════ -->
+<div class="menu-wrap">
+<div class="grid-view" id="menuGrid" role="list"></div>
+<div class="list-view" id="menuList" role="list" style="display:none"></div>
+  <div class="empty" id="emptyState">
+	<div class="empty-icon"><i class="fa-solid fa-bowl-food"></i></div>
+	<p class="empty-title" data-i18n="no_results">هیچ ئەنجامێک نەدۆزرایەوە</p>
+	<p class="empty-sub" data-i18n="try_other">گەڕانێکی تر تاقی بکەرەوە</p>
+  </div>
+</div>
+
+</main>
+
+<footer class="footer">
+<p style="color:var(--muted);font-size:13px;line-height:1.8;margin-bottom:12px" data-i18n="about"></p>
+
+<div style="margin-bottom:12px;line-height:2">
+  <div style="color:var(--gold);font-size:13px;font-weight:600;margin-bottom:6px">
+    <i class="fa-solid fa-location-dot"></i>
+    <span data-i18n="branches">لقەکانمان</span>
+  </div>
+  <a href="tel:+9647509628683" style="color:var(--muted);text-decoration:none;display:block;font-size:13px">
+    <i class="fa-solid fa-phone" style="color:var(--gold);margin-inline-end:6px"></i>
+    لق ١ — ناوی شوێن — 07509628683
+  </a>
+  <a href="tel:+9647509628683" style="color:var(--muted);text-decoration:none;display:block;font-size:13px">
+    <i class="fa-solid fa-phone" style="color:var(--gold);margin-inline-end:6px"></i>
+    لق ٢ — ناوی شوێن — 07509628683
+  </a>
+</div>
+
+<p>
+  <span data-i18n="rights">هەموو مافەکان پارێزراون</span>
+  &copy; 2025 &mdash;
+  <span data-i18n="made_by">دروستکراوە لەلایەن</span>
+  <a href="https://wa.me/9647509628683" target="_blank"
+     style="color:var(--gold);text-decoration:none;font-weight:600">
+    DevMuhamad@
+  </a>
+</p>
+
+
+</footer>
+
+<!-- ════════════════ MODAL ════════════════ -->
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Meal details">
+  <div class="modal" id="modal">
+	<div class="modal-img-wrap">
+	  <img id="mImg" src="" alt="" loading="lazy"/>
+	  <div class="modal-img-actions">
+		<button class="modal-act-btn" id="mFavBtn" aria-label="Favourite">
+<i class="fa-solid fa-basket-shopping"></i>
+		</button>
+		<button class="modal-act-btn" id="mClose" aria-label="Close">
+		  <i class="fa-solid fa-xmark"></i>
+		</button>
+	  </div>
+	  <div class="modal-cat-badge" id="mCat"></div>
+	</div>
+	<div class="modal-body">
+	  <h2 class="modal-name" id="mName"></h2>
+	  <div class="modal-rule"></div>
+	  <div class="modal-chips" id="mChips"></div>
+	  <div class="modal-price-row">
+		<span class="mpr-label" data-i18n="price">نرخ</span>
+		<div>
+		  <span class="mpr-val" id="mPrice"></span>
+		  <span class="mpr-cur" data-i18n="currency">دینار</span>
+		</div>
+	  </div>
+	</div>
+  </div>
+</div>
+
+<!-- ════════════════ TOAST ════════════════ -->
+<div class="toast-wrap" aria-live="polite">
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════════════════════════
+   1. TRANSLATIONS
+════════════════════════════════════════════════════════════════ */
+const I18N = {
+  ckb:{
+	brand:'ئاراش فاست فوود',
+favorites:'سەبەتە',
+	recently_viewed:'دوا بینراوەکان',
+	all_meals:'هەموو خواردنەکان',
+	no_results:'هیچ ئەنجامێک نەدۆزرایەوە',
+	try_other:'گەڕانێکی تر تاقی بکەرەوە',
+	price:'نرخ',
+	currency:'دینار',
+	rights:'هەموو مافەکان پارێزراون',
+	cat_all:'هەموو',
+	cat_burger:'بەرگەر',
+	cat_pizza:'پیتزا',
+	cat_drinks:'خواردنەوە',
+	calories:'کالۆری',
+	prep_min:'خولەک',
+	fav_add:'زیادکرا بە دڵخوازەکان',
+	fav_rm:'لە دڵخوازەکان لابرا',
+  cat_offer:'ئۆفەر',
+cat_shawarma:'شاورمە',
+cat_maqbilat:'مقبیلات',
+about:'ئاراش فاست فوود خواردنگەیەکی تایبەتە لە هەولێر، کە بە باشترین کواڵێتی و تەعمی دیاریکراو خزمەتی کڕیارەکانی دەکات. مێنووی ئێمە پڕە لە بەرگەر، پیتزا، شاورمە و زیاتر. ئامانجمان ئەوەیە کە هەر کڕیارێک بە دڵخۆشی هەڵبژێرێت و خواردنێکی باش بخوات. بەرزترین ئاستی پاکیزەیی و خزمەتگوزاری ئەرکی ئێمەیە.',
+branches:'لقەکانمان',
+rights:'هەموو مافەکان پارێزراون',
+made_by:'دروستکراوە لەلایەن',
+  },
+  ar:{
+	brand:'آراش فاست فود',
+favorites:'السلة',
+	recently_viewed:'شوهد مؤخراً',
+	all_meals:'جميع الوجبات',
+	no_results:'لا توجد نتائج',
+	try_other:'جرّب كلمة أخرى',
+	price:'السعر',
+	currency:'دينار',
+	rights:'جميع الحقوق محفوظة',
+	cat_all:'الكل',
+	cat_burger:'برغر',
+	cat_pizza:'بيتزا',
+	cat_drinks:'مشروبات',
+	calories:'سعرة',
+	prep_min:'دقيقة',
+	fav_add:'أُضيف للمفضلة',
+	fav_rm:'حُذف من المفضلة',
+  cat_offer:'عروض',
+cat_shawarma:'شاورما',
+cat_maqbilat:'مقبلات',
+about:'آراش فاست فود مطعم متميز في أربيل، يقدم أشهى المأكولات بأعلى معايير الجودة والنظافة. قائمتنا تضم برغر وبيتزا وشاورما والمزيد. هدفنا أن يختار كل زبون بسعادة ويتناول وجبة لذيذة.',
+branches:'فروعنا',
+rights:'جميع الحقوق محفوظة',
+made_by:'تم التطوير بواسطة',
+  },
+  en:{
+	brand:'Arash Fast Food',
+favorites:'Cart',
+	recently_viewed:'Recently Viewed',
+	all_meals:'All Meals',
+	no_results:'No results found',
+
+	price:'Price',
+	currency:'IQD',
+	rights:'All rights reserved',
+	cat_all:'All',
+	cat_burger:'Burger',
+	cat_pizza:'Pizza',
+	cat_drinks:'Drinks',
+	calories:'kcal',
+	prep_min:'min',
+	fav_add:'Added to favorites',
+	fav_rm:'Removed from favorites',
+  cat_offer:'Offers',
+cat_shawarma:'Shawarma',
+cat_maqbilat:'Appetizers',
+about:'Arash Fast Food is a distinguished restaurant in Erbil, serving the finest meals with the highest quality and cleanliness standards. Our menu includes burgers, pizza, shawarma and more. Our goal is for every customer to choose happily and enjoy a great meal.',
+branches:'Our Branches',
+rights:'All rights reserved',
+made_by:'Developed by',
+  },
+};
+
+/* ════════════════════════════════════════════════════════════════
+   2. CATEGORY CONFIG  (photo thumbnail for each)
+════════════════════════════════════════════════════════════════ */
+const CATS = [
+  {id:'all',	icon:'fa-solid fa-fire-flame-curved', labelKey:'cat_all',	img:null},
+  {id:'burger', icon:null, labelKey:'cat_burger',
+	img:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=120&q=70'},
+  {id:'pizza',  icon:null, labelKey:'cat_pizza',
+	img:'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=120&q=70'},
+  {id:'drinks', icon:null, labelKey:'cat_drinks',
+	img:'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=120&q=70'},
+  {id:'offer',   icon:null, labelKey:'cat_offer',
+  img:'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=120&q=70'},
+{id:'shawarma', icon:null, labelKey:'cat_shawarma',
+  img:'https://images.unsplash.com/photo-1529006557810-274b9b2fc783?w=120&q=70'},
+{id:'maqbilat', icon:null, labelKey:'cat_maqbilat',
+  img:'https://images.unsplash.com/photo-1541745537411-b8046dc6d66c?w=120&q=70'},
+
+];
+
+/* ════════════════════════════════════════════════════════════════
+   3. MEAL DATA
+════════════════════════════════════════════════════════════════ */
+const MEALS = [
+  {id:1, cat:'burger',
+img:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=700&q=80&fm=webp',
+   name:{ckb:'کڵاسیک بەرگەر',ar:'برغر كلاسيكي',en:'Classic Burger'},
+   desc:{ckb:'گۆشتی گایی فرێش لەگەڵ تۆماتی، کاهو، پەنیر چێدار و سووسی تایبەت',
+		 ar:'لحم بقري طازج مع طماطم وخس وجبن شيدر وصوص خاص',
+		 en:'Fresh beef patty with tomato, lettuce, cheddar and special sauce'},
+   price:4500, cal:620, prep:10},
+
+  {id:2, cat:'burger',
+   img:'https://images.unsplash.com/photo-1553979459-d2229ba7433b?w=700&q=80&fm=webp',
+   name:{ckb:'دووجوانە سمەش بەرگەر',ar:'برغر دبل سماش',en:'Double Smash Burger'},
+   desc:{ckb:'دوو قات گۆشتی سمەشد، بەیکن، مووخۆر و سووسی تایبەتی ئاراش',
+		 ar:'طبقتان من اللحم المفروم مع بيكون ومخلل وصوص آراش',
+		 en:'Double smashed beef, bacon, pickles and Arash signature sauce'},
+   price:6500, cal:880, prep:12},
+
+  {id:3, cat:'pizza',
+   img:'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=700&q=80&fm=webp',
+   name:{ckb:'مارگاریتا پیتزا',ar:'بيتزا مارغريتا',en:'Margherita Pizza'},
+   desc:{ckb:'سووسی تۆماتی، پەنیر موزارێلا و گیایە فرێشەکان لەسەر ناندانی تەنووری',
+		 ar:'صلصة طماطم وجبن موزاريلا وأعشاب طازجة على عجينة تنورية',
+		 en:'Tomato sauce, mozzarella and fresh herbs on stone-baked dough'},
+   price:7000, cal:750, prep:18},
+
+  {id:4, cat:'pizza',
+   img:'https://images.unsplash.com/photo-1628840042765-356cda07504e?w=700&q=80&fm=webp',
+   name:{ckb:'پیتزای گۆشتی تایبەت',ar:'بيتزا اللحم الخاصة',en:'Arash Meat Special'},
+   desc:{ckb:'گۆشتی گایی، سووسیس، بەیکن، پیازی سووری و پەنیر چهار جۆر',
+		 ar:'لحم بقري وسجق وبيكون وبصل أحمر وأربعة أنواع جبن',
+		 en:'Ground beef, sausage, bacon, red onion and four cheese blend'},
+   price:9500, cal:1100, prep:22},
+
+  {id:5, cat:'drinks',
+   img:'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=700&q=80&fm=webp',
+   name:{ckb:'فرێشێی مێوەی تەماشا',ar:'عصير فواكه طازج',en:'Fresh Fruit Blend'},
+   desc:{ckb:'تەماشاکانی فرێش بلەندکراوە، بەبێ شکر زیادکراو',
+		 ar:'فواكه طازجة ممزوجة بدون سكر مضاف',
+		 en:'Freshly blended seasonal fruits, no added sugar'},
+   price:2500, cal:180, prep:5},
+
+  {id:6, cat:'drinks',
+   img:'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=700&q=80&fm=webp',
+   name:{ckb:'ئاراش ئایس کافێ',ar:'آراش آيس كوفي',en:'Arash Iced Coffee'},
+   desc:{ckb:'کافێی دووبل شۆت لەگەڵ شیری بووخارەبووی سارد و شربەتی کارامێل',
+		 ar:'قهوة دبل شوت مع حليب مبخر بارد وشراب الكراميل',
+		 en:'Double-shot espresso with cold steamed milk and caramel syrup'},
+   price:3000, cal:220, prep:5},
+];
+
+/* ════════════════════════════════════════════════════════════════
+   4. STATE
+════════════════════════════════════════════════════════════════ */
+const S = {
+  lang:'ckb',
+  cat:'all',
+  view:'grid',	   // 'grid'|'list'
+  favs: safeJSON('arash_favs', []),
+  recent: safeJSON('arash_recent', []),
+  openId: null,
+};
+
+function safeJSON(key, fallback){
+  try{ return JSON.parse(localStorage.getItem(key)) || fallback; }
+  catch{ return fallback; }
+}
+const saveFavs   = () => localStorage.setItem('arash_favs',   JSON.stringify(S.favs));
+const saveRecent = () => localStorage.setItem('arash_recent', JSON.stringify(S.recent));
+
+/* ════════════════════════════════════════════════════════════════
+   5. HELPERS
+════════════════════════════════════════════════════════════════ */
+const t   = k => I18N[S.lang][k] || k;
+const loc = o => o[S.lang] || o.en;
+
+const filtered = () => {
+  return MEALS.filter(m => S.cat==='all' || m.cat===S.cat);
+};
+
+function markRecent(id){
+  S.recent = [id, ...S.recent.filter(r=>r!==id)].slice(0,10);
+  saveRecent();
+}
+
+function toggleFav(id){
+  const item = S.favs.find(x => x.id === id);
+  if(item){ 
+    item.qty++; 
+    toast('×' + item.qty + ' زیادکرا'); 
+  } else { 
+    S.favs.push({id, qty:1}); 
+    toast(t('fav_add')); 
+  }
+  saveFavs();
+  renderSide();
+  if(S.openId === id) syncModalFav();
+}
+
+
+
+/* ════════════════════════════════════════════════════════════════
+   6. TOAST
+════════════════════════════════════════════════════════════════ */
+let _toastT;
+function toast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(_toastT);
+  _toastT = setTimeout(()=>el.classList.remove('show'), 2300);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   7. RENDER CATEGORIES
+════════════════════════════════════════════════════════════════ */
+function renderCats(){
+  const track = document.getElementById('catsTrack');
+  const existing = track.querySelectorAll('[data-cat]');
   
-  <div id="qrcode" style="margin:24px auto;display:inline-block"></div>
+  if(existing.length === CATS.length){
+    existing.forEach(tile=>{
+      const on = tile.dataset.cat === S.cat;
+      tile.classList.toggle('on', on);
+      tile.setAttribute('aria-pressed', String(on));
+      const label = tile.querySelector('.cat-label');
+      const cat = CATS.find(c=>c.id===tile.dataset.cat);
+      if(label && cat) label.textContent = t(cat.labelKey);
+    });
+    return;
+  }
 
-  <script>
-  function generate(){
-    const exp     = Date.now() + 10 * 60 * 1000; // ١٠ خولەک
-    const token   = Math.random().toString(36).slice(2);
-const menuURL = 'https://devmuhamad1991.github.io/Matham/';
+  track.innerHTML = CATS.map(c=>`
+	<li class="cat-tile${S.cat===c.id?' on':''}" role="listitem" data-cat="${c.id}"
+		tabindex="0" aria-pressed="${S.cat===c.id}" aria-label="${t(c.labelKey)}">
+	  <div class="cat-img-ring">
+		<div class="cat-img-inner">
+		  ${c.img
+			? `<img src="${c.img}" alt="${t(c.labelKey)}" loading="lazy"/>`
+			: `<div class="cat-icon-circle"><i class="${c.icon}" aria-hidden="true"></i></div>`}
+		</div>
+	  </div>
+	  <span class="cat-label">${t(c.labelKey)}</span>
+	  <div class="cat-dot"></div>
+	</li>
+  `).join('');
+}
 
-    const url     = `${menuURL}?token=${token}&exp=${exp}`;
-    
-    document.getElementById('qrcode').innerHTML = '';
-    new QRCode(document.getElementById('qrcode'), {
-      text: url, width: 256, height: 256
+/* ════════════════════════════════════════════════════════════════
+   8. RENDER SIDE SECTIONS
+════════════════════════════════════════════════════════════════ */
+// بەجێ ئەمەی هەیەت:
+
+// بیکە ئەمە:
+function miniCard(m){ return `
+  <article class="mini" role="listitem" data-id="${m.id}" tabindex="0">
+    <img class="mini-img" src="${m.img}" alt="${loc(m.name)}" loading="lazy"/>
+    <div class="mini-body">
+      <div class="mini-name">${loc(m.name)}</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px">
+        <div class="mini-price">${m.qty}× ${(m.price * m.qty).toLocaleString()} ${t('currency')}</div>
+        <button onclick="removeFromCart(${m.id})" style="background:rgba(255,0,0,.15);border:none;color:#e8224a;border-radius:50%;width:20px;height:20px;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;padding:0">✕</button>
+      </div>
+    </div>
+  </article>`; 
+}
+
+
+
+function renderSide(){
+  const favMs = S.favs.map(x => ({
+    ...MEALS.find(m => m.id === x.id), 
+    qty: x.qty
+  })).filter(Boolean);
+
+  const favSec = document.getElementById('favSec');
+  favSec.style.display = favMs.length ? '' : 'none';
+
+  const total = favMs.reduce((s,m) => s + m.price * m.qty, 0);
+  const el = document.getElementById('cartTotal');
+  if(el) el.textContent = favMs.length ? total.toLocaleString()+' '+t('currency') : '';
+
+  const track = document.getElementById('favTrack');
+
+  // وێنە ریفرێش نەبێت
+  favMs.forEach(m => {
+    const existing = track.querySelector(`[data-id="${m.id}"]`);
+    if(existing){
+      const nameEl = existing.querySelector('.mini-name');
+      const priceEl = existing.querySelector('.mini-price');
+      if(nameEl) nameEl.textContent = loc(m.name);
+      if(priceEl) priceEl.textContent = `${m.qty}× ${(m.price * m.qty).toLocaleString()} ${t('currency')}`;
+    } else {
+      const div = document.createElement('div');
+      div.innerHTML = miniCard(m);
+      track.appendChild(div.firstElementChild);
+    }
+  });
+
+  // کارتی نەماوە بسڕەوە
+  track.querySelectorAll('[data-id]').forEach(card => {
+    if(!favMs.find(m => m.id === Number(card.dataset.id))) card.remove();
+  });
+}
+
+
+
+
+/* ════════════════════════════════════════════════════════════════
+   9. RENDER GRID CARD
+════════════════════════════════════════════════════════════════ */
+function gridCard(m, idx){ return `
+  <article class="gcard" role="listitem" data-id="${m.id}" tabindex="0"
+	aria-label="${loc(m.name)}">
+	<div class="gc-img">
+	  <img src="${m.img}" alt="${loc(m.name)}" loading="lazy"/>
+	  <span class="gc-price-float">${m.price.toLocaleString()} <small>${t('currency')}</small></span>
+	  <button class="gc-fav${S.favs.includes(m.id)?' on':''}" data-fav="${m.id}"
+		aria-label="${t(S.favs.includes(m.id)?'fav_rm':'fav_add')}" aria-pressed="${S.favs.includes(m.id)}">
+<i class="fa-solid fa-basket-shopping" aria-hidden="true"></i>
+	  </button>
+	</div>
+	<div class="gc-body">
+	  <div class="gc-name">${loc(m.name)}</div>
+	</div>
+  </article>`; }
+
+/* ════════════════════════════════════════════════════════════════
+   10. RENDER LIST CARD
+════════════════════════════════════════════════════════════════ */
+function listCard(m, idx){ return `
+  <article class="lcard" role="listitem" data-id="${m.id}" tabindex="0"
+	aria-label="${loc(m.name)}">
+	<div class="lc-img">
+${cachedImg(m.img, loc(m.name))}
+	</div>
+	<div class="lc-body">
+	  <div>
+		<div class="lc-cat">${t('cat_'+m.cat)}</div>
+		<div class="lc-name">${loc(m.name)}</div>
+	  </div>
+	  <div class="lc-footer">
+		<div>
+		  <span class="lc-price">${m.price.toLocaleString()}</span>
+		  <span class="lc-price-cur">${t('currency')}</span>
+		</div>
+		<button class="lc-fav${S.favs.includes(m.id)?' on':''}" data-fav="${m.id}"
+		  aria-label="${t(S.favs.includes(m.id)?'fav_rm':'fav_add')}" aria-pressed="${S.favs.includes(m.id)}">
+<i class="fa-solid fa-basket-shopping" aria-hidden="true"></i>
+		</button>
+	  </div>
+	</div>
+  </article>`; }
+
+/* ════════════════════════════════════════════════════════════════
+   11. RENDER MENU
+════════════════════════════════════════════════════════════════ */
+function renderMenu(){
+  const meals = filtered();
+  const gridEl = document.getElementById('menuGrid');
+  const listEl = document.getElementById('menuList');
+  const empty  = document.getElementById('emptyState');
+  const isGrid = S.view==='grid';
+
+  document.getElementById('rCount').textContent = meals.length;
+  empty.classList.toggle('on', !meals.length);
+
+  gridEl.style.display = isGrid ? '' : 'none';
+  listEl.style.display = isGrid ? 'none' : '';
+
+  const grid = isGrid ? gridEl : listEl;
+  const fn   = isGrid ? gridCard : listCard;
+  const langChanged = grid.dataset.lang !== S.lang;
+
+  // یەکەم جار — هەموو بسازە
+  if(!grid.dataset.built){
+    grid.innerHTML = MEALS.map((m,i)=>fn(m,i)).join('');
+    grid.dataset.built = '1';
+    grid.dataset.lang  = S.lang;
+  }
+
+  // پیشاندەی بگۆڕە
+  const mealIds = meals.map(m=>m.id);
+  grid.querySelectorAll('[data-id]').forEach(card=>{
+    card.classList.toggle('hidden', !mealIds.includes(Number(card.dataset.id)));
+  });
+
+  // زمان گۆڕدرا
+  if(langChanged){
+    grid.dataset.lang = S.lang;
+    grid.querySelectorAll('[data-id]').forEach(card=>{
+      const m = MEALS.find(x=>x.id===Number(card.dataset.id));
+      if(!m) return;
+      const nameEl = card.querySelector('.gc-name, .lc-name');
+      const catEl  = card.querySelector('.lc-cat');
+      if(nameEl) nameEl.textContent = loc(m.name);
+      if(catEl)  catEl.textContent  = t('cat_'+m.cat);
     });
   }
-  </script>
+}
+
+
+
+/* ════════════════════════════════════════════════════════════════
+   12. RENDER ALL
+════════════════════════════════════════════════════════════════ */
+function removeFromCart(id){
+  const item = S.favs.find(x => x.id === id);
+  if(!item) return;
+  if(item.qty > 1){
+    item.qty--;
+  } else {
+    S.favs = S.favs.filter(x => x.id !== id);
+  }
+  saveFavs();
+  renderSide();
+  syncModalFav();
+}
+
+
+function renderAll(){
+  renderCats();
+  renderMenu();
+  renderSide();
+  applyI18n();
+}
+
+/* ════════════════════════════════════════════════════════════════
+   13. i18n
+════════════════════════════════════════════════════════════════ */
+function applyI18n(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+	const v = I18N[S.lang][el.dataset.i18n];
+	if(v!==undefined) el.textContent = v;
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{
+	const v = I18N[S.lang][el.dataset.i18nPlaceholder];
+	if(v!==undefined) el.placeholder = v;
+  });
+}
+
+/* ════════════════════════════════════════════════════════════════
+   14. MODAL
+════════════════════════════════════════════════════════════════ */
+function openModal(id){
+  const m = MEALS.find(x=>x.id===id);
+  if(!m) return;
+  S.openId = id;
+  markRecent(id);
+  renderSide();
+
+const img = document.getElementById('mImg');
+if(img.dataset.loaded !== String(id)){
+  img.src = m.img;
+  img.dataset.loaded = id;
+}
+img.alt = loc(m.name);
+  document.getElementById('mCat').textContent  = t('cat_'+m.cat);
+  document.getElementById('mName').textContent = loc(m.name);
+  document.getElementById('mPrice').textContent = m.price.toLocaleString();
+  document.getElementById('mChips').innerHTML = `
+	<div class="mchip"><i class="fa-solid fa-fire" aria-hidden="true"></i>${m.cal} ${t('calories')}</div>
+	<div class="mchip"><i class="fa-regular fa-clock" aria-hidden="true"></i>${m.prep} ${t('prep_min')}</div>
+  `;
+  syncModalFav();
+  applyI18n();
+
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeModal(){
+  document.getElementById('overlay').classList.remove('open');
+  document.body.style.overflow='';
+  S.openId=null;
+}
+
+function syncModalFav(){
+  const btn = document.getElementById('mFavBtn');
+  if(!btn) return;
+  const on = S.favs.includes(S.openId);
+  btn.classList.toggle('fav-on', on);
+  btn.setAttribute('aria-pressed', String(on));
+}
+
+/* ════════════════════════════════════════════════════════════════
+   15. LANGUAGE SWITCH
+════════════════════════════════════════════════════════════════ */
+function setLang(lang){
+  S.lang = lang;
+  document.documentElement.lang = lang;
+  document.documentElement.dir  = lang==='en' ? 'ltr' : 'rtl';
+  document.body.className = `lang-${lang}`;
+  document.querySelectorAll('.lpb').forEach(b=>{
+	const on = b.dataset.lang===lang;
+	b.classList.toggle('on', on);
+	b.setAttribute('aria-pressed', String(on));
+  });
+  renderAll();
+}
+
+/* ════════════════════════════════════════════════════════════════
+   16. VIEW MODE
+════════════════════════════════════════════════════════════════ */
+function setView(v){
+  S.view = v;
+  document.getElementById('gBtn').classList.toggle('on', v==='grid');
+  document.getElementById('lBtn').classList.toggle('on', v==='list');
+  document.getElementById('gBtn').setAttribute('aria-pressed', String(v==='grid'));
+  document.getElementById('lBtn').setAttribute('aria-pressed', String(v==='list'));
+  renderMenu();
+}
+
+
+/* Category clicks */
+document.getElementById('catsTrack').addEventListener('click', e=>{
+  const tile = e.target.closest('[data-cat]');
+  if(!tile) return;
+  S.cat = tile.dataset.cat;
+  renderCats();
+  renderMenu();
+  applyI18n();
+});
+document.getElementById('catsTrack').addEventListener('keydown', e=>{
+  if(e.key==='Enter'){ const tile=e.target.closest('[data-cat]'); if(tile){S.cat=tile.dataset.cat;renderCats();renderMenu();applyI18n();} }
+});
+
+
+/* Menu card / fav clicks */
+document.getElementById('menuGrid').addEventListener('click', e=>{
+ const fav = e.target.closest('[data-fav]');
+ if(fav){ e.stopPropagation(); toggleFav(Number(fav.dataset.fav)); return; }
+ const card = e.target.closest('[data-id]');
+ if(card) openModal(Number(card.dataset.id));
+});
+document.getElementById('menuGrid').addEventListener('keydown', e=>{
+ if(e.key==='Enter'){ const card=e.target.closest('[data-id]'); if(card) openModal(Number(card.dataset.id)); }
+});
+
+/* ✅ List View — نوێ زیادکرا */
+document.getElementById('menuList').addEventListener('click', e=>{
+ const fav = e.target.closest('[data-fav]');
+ if(fav){ e.stopPropagation(); toggleFav(Number(fav.dataset.fav)); return; }
+ const card = e.target.closest('[data-id]');
+ if(card) openModal(Number(card.dataset.id));
+});
+document.getElementById('menuList').addEventListener('keydown', e=>{
+ if(e.key==='Enter'){ const card=e.target.closest('[data-id]'); if(card) openModal(Number(card.dataset.id)); }
+});
+
+
+/* Side section clicks */
+[document.getElementById('favTrack'), document.getElementById('recentTrack')].forEach(el=>{
+  el.addEventListener('click', e=>{ const c=e.target.closest('[data-id]'); if(c) openModal(Number(c.dataset.id)); });
+});
+
+/* View buttons */
+document.getElementById('gBtn').addEventListener('click', ()=>setView('grid'));
+document.getElementById('lBtn').addEventListener('click', ()=>setView('list'));
+
+/* Modal close */
+document.getElementById('mClose').addEventListener('click', closeModal);
+document.getElementById('overlay').addEventListener('click', e=>{ if(e.target===document.getElementById('overlay')) closeModal(); });
+document.getElementById('mFavBtn').addEventListener('click', ()=>{ if(S.openId) toggleFav(S.openId); });
+
+/* Language */
+document.querySelectorAll('.lpb').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.lang)));
+
+/* Keyboard */
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+
+/* ════════════════════════════════════════════════════════════════
+   18. INIT
+════════════════════════════════════════════════════════════════ */
+MEALS.forEach(m=>{ const i=new Image(); i.src=m.img; });
+
+setLang('ckb');
+</script>
 </body>
 </html>
