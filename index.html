@@ -536,34 +536,6 @@ body.lang-ar  .modal-name{font-family:'Noto Naskh Arabic','Cormorant Garamond',s
   font-family: 'Noto Sans Arabic', Georgia, serif !important;
 }
 
-.gc-fav, .lc-fav {
-  position: relative;
-}
-.cart-badge {
-  position: absolute;
-  top: -5px;
-  inset-inline-end: -5px;
-  min-width: 16px;
-  height: 16px;
-  border-radius: 99px;
-  background: var(--gold);
-  color: var(--ink);
-  font-size: 9px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 3px;
-  pointer-events: none;
-  opacity: 0;
-  transform: scale(0);
-  transition: all .2s var(--ease);
-}
-.cart-badge.show {
-  opacity: 1;
-  transform: scale(1);
-}
-
 </style>
 </head>
 <body class="lang-ckb" dir="rtl">
@@ -846,135 +818,29 @@ img:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=700&q=80&fm=
 		 en:'Tomato sauce, mozzarella and fresh herbs on stone-baked dough'},
    price:7000, cal:750, prep:18},
 
-{id:4, cat:'pizza',
- img:'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=700&q=80&fm=webp',
- name:{ckb:'پیتزا عایلی',ar:'بيتزا عائلية',en:'Family Pizza'},
- desc:{ckb:'پیتزای گەورە بۆ خێزان، پەنیر، گۆشت، مریشک و حەزرەوات',
-       ar:'بيتزا عائلية كبيرة بالجبن واللحم والدجاج والخضروات',
-       en:'Large family pizza with cheese, beef, chicken and vegetables'},
- price:18000, cal:1850, prep:25},
+  {id:4, cat:'pizza',
+   img:'https://images.unsplash.com/photo-1628840042765-356cda07504e?w=700&q=80&fm=webp',
+   name:{ckb:'پیتزای گۆشتی تایبەت',ar:'بيتزا اللحم الخاصة',en:'Arash Meat Special'},
+   desc:{ckb:'گۆشتی گایی، سووسیس، بەیکن، پیازی سووری و پەنیر چهار جۆر',
+		 ar:'لحم بقري وسجق وبيكون وبصل أحمر وأربعة أنواع جبن',
+		 en:'Ground beef, sausage, bacon, red onion and four cheese blend'},
+   price:9500, cal:1100, prep:22},
 
-{id:5, cat:'pizza',
- img:'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=700&q=80&fm=webp',
- name:{ckb:'پیتزا تایبەت شێف',ar:'بيتزا الشيف الخاصة',en:'Chef Special Pizza'},
- desc:{ckb:'تێکەڵەی گۆشت، مریشک، پەنیر و سۆسی تایبەتی شێف',
-       ar:'لحم ودجاج وجبن مع صلصة الشيف الخاصة',
-       en:'Beef, chicken, cheese and chef special sauce'},
- price:12000, cal:980, prep:20},
+  {id:5, cat:'drinks',
+   img:'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=700&q=80&fm=webp',
+   name:{ckb:'فرێشێی مێوەی تەماشا',ar:'عصير فواكه طازج',en:'Fresh Fruit Blend'},
+   desc:{ckb:'تەماشاکانی فرێش بلەندکراوە، بەبێ شکر زیادکراو',
+		 ar:'فواكه طازجة ممزوجة بدون سكر مضاف',
+		 en:'Freshly blended seasonal fruits, no added sugar'},
+   price:2500, cal:180, prep:5},
 
-{id:6, cat:'pizza',
- img:'https://images.unsplash.com/photo-1520201163981-8cc95007dd2e?w=700&q=80&fm=webp',
- name:{ckb:'پیتزا مریشک ناوەند',ar:'بيتزا دجاج وسط',en:'Chicken Pizza Medium'},
- desc:{ckb:'مریشک، پەنیر موزارێلا و سووسی تۆماتە',
-       ar:'دجاج مع جبن موزاريلا وصلصة الطماطم',
-       en:'Chicken, mozzarella and tomato sauce'},
- price:8000, cal:820, prep:18},
-
-{id:7, cat:'pizza',
- img:'https://images.unsplash.com/photo-1520201163981-8cc95007dd2e?w=700&q=80&fm=webp',
- name:{ckb:'پیتزا مریشک گەورە',ar:'بيتزا دجاج كبيرة',en:'Chicken Pizza Large'},
- desc:{ckb:'پیتزای گەورەی مریشک بە پەنیر و سووسی تایبەت',
-       ar:'بيتزا دجاج كبيرة مع الجبن والصلصة الخاصة',
-       en:'Large chicken pizza with cheese and special sauce'},
- price:11000, cal:1180, prep:20},
-
-{id:8, cat:'pizza',
- img:'https://images.unsplash.com/photo-1541745537411-b8046dc6d66c?w=700&q=80&fm=webp',
- name:{ckb:'پیتزا گۆشتی گەورە',ar:'بيتزا لحم كبيرة',en:'Beef Pizza Large'},
- desc:{ckb:'گۆشتی تازە، پەنیر و سووسی تۆمات',
-       ar:'لحم طازج مع الجبن وصلصة الطماطم',
-       en:'Fresh beef, cheese and tomato sauce'},
- price:11500, cal:1200, prep:20},
-
-{id:9, cat:'pizza',
- img:'https://images.unsplash.com/photo-1541745537411-b8046dc6d66c?w=700&q=80&fm=webp',
- name:{ckb:'پیتزا گۆشتی ناوەند',ar:'بيتزا لحم وسط',en:'Beef Pizza Medium'},
- desc:{ckb:'گۆشتی تازە، پەنیر و حەزرەوات',
-       ar:'لحم طازج مع الجبن والخضروات',
-       en:'Fresh beef with cheese and vegetables'},
- price:8500, cal:850, prep:18},
-
-{id:10, cat:'pizza',
- img:'https://images.unsplash.com/photo-1594007654729-407eedc4be65?w=700&q=80&fm=webp',
- name:{ckb:'پیتزا حەزرەواتی گەورە',ar:'بيتزا خضار كبيرة',en:'Vegetable Pizza Large'},
- desc:{ckb:'تێکەڵەی حەزرەواتی تازە لەگەڵ پەنیر',
-       ar:'خضروات طازجة مع الجبن',
-       en:'Fresh mixed vegetables with cheese'},
- price:10000, cal:920, prep:18},
-
-{id:11, cat:'pizza',
- img:'https://images.unsplash.com/photo-1594007654729-407eedc4be65?w=700&q=80&fm=webp',
- name:{ckb:'پیتزا حەزرەواتی ناوەند',ar:'بيتزا خضار وسط',en:'Vegetable Pizza Medium'},
- desc:{ckb:'حەزرەواتی تازە و پەنیر موزارێلا',
-       ar:'خضروات طازجة مع جبن موزاريلا',
-       en:'Fresh vegetables with mozzarella'},
- price:7500, cal:720, prep:17},
-
-{id:12, cat:'pizza',
- img:'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=700&q=80&fm=webp',
- name:{ckb:'پیتزا مارگاریتا گەورە',ar:'بيتزا مارغريتا كبيرة',en:'Margherita Pizza Large'},
- desc:{ckb:'سووسی تۆمات، موزارێلا و گیای فرێش',
-       ar:'صلصة طماطم وجبن موزاريلا وأعشاب',
-       en:'Tomato sauce, mozzarella and herbs'},
- price:9500, cal:980, prep:18},
-
-{id:13, cat:'pizza',
- img:'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=700&q=80&fm=webp',
- name:{ckb:'پیتزا مارگاریتا ناوەند',ar:'بيتزا مارغريتا وسط',en:'Margherita Pizza Medium'},
- desc:{ckb:'سووسی تۆمات و موزارێلا',
-       ar:'صلصة طماطم وجبن موزاريلا',
-       en:'Tomato sauce and mozzarella'},
- price:7000, cal:750, prep:18},
-
-{id:14, cat:'pizza',
- img:'https://images.unsplash.com/photo-1511689660979-10d2b1aada49?w=700&q=80&fm=webp',
- name:{ckb:'پیتزا مشەکەلی گەورە',ar:'بيتزا مشكلة كبيرة',en:'Mixed Pizza Large'},
- desc:{ckb:'تێکەڵەی گۆشت، مریشک، سۆسیس و حەزرەوات',
-       ar:'لحم ودجاج ونقانق وخضروات',
-       en:'Mixed beef, chicken, sausage and vegetables'},
- price:12000, cal:1250, prep:22},
-
-{id:15, cat:'pizza',
- img:'https://images.unsplash.com/photo-1511689660979-10d2b1aada49?w=700&q=80&fm=webp',
- name:{ckb:'پیتزا مشەکەلی ناوەند',ar:'بيتزا مشكلة وسط',en:'Mixed Pizza Medium'},
- desc:{ckb:'تێکەڵەی گۆشت، مریشک و حەزرەوات',
-       ar:'لحم ودجاج وخضروات',
-       en:'Mixed beef, chicken and vegetables'},
- price:9000, cal:900, prep:20},
-
-{id:16, cat:'pizza',
- img:'https://images.unsplash.com/photo-1571407970349-bc81e7e96d47?w=700&q=80&fm=webp',
- name:{ckb:'پیتزا ماسی گەورە',ar:'بيتزا تونة كبيرة',en:'Tuna Pizza Large'},
- desc:{ckb:'ماسی تونا، پەنیر و زەیتوون',
-       ar:'تونة مع الجبن والزيتون',
-       en:'Tuna, cheese and olives'},
- price:11500, cal:1080, prep:20},
-
-{id:17, cat:'pizza',
- img:'https://images.unsplash.com/photo-1571407970349-bc81e7e96d47?w=700&q=80&fm=webp',
- name:{ckb:'پیتزا ماسی ناوەند',ar:'بيتزا تونة وسط',en:'Tuna Pizza Medium'},
- desc:{ckb:'تونا، پەنیر موزارێلا و زەیتوون',
-       ar:'تونة مع جبن موزاريلا وزيتون',
-       en:'Tuna, mozzarella and olives'},
- price:8500, cal:820, prep:18},
-
-{id:18, cat:'pizza',
- img:'https://images.unsplash.com/photo-1628840042765-356cda07504e?w=700&q=80&fm=webp',
- name:{ckb:'پیتزا پپرۆنی گەورە',ar:'بيتزا بيبروني كبيرة',en:'Pepperoni Pizza Large'},
- desc:{ckb:'پپرۆنی، پەنیر موزارێلا و سووسی تۆمات',
-       ar:'بيبروني مع جبن موزاريلا وصلصة الطماطم',
-       en:'Pepperoni, mozzarella and tomato sauce'},
- price:12000, cal:1220, prep:20},
-
-{id:19, cat:'pizza',
- img:'https://images.unsplash.com/photo-1628840042765-356cda07504e?w=700&q=80&fm=webp',
- name:{ckb:'پیتزا پپرۆنی ناوەند',ar:'بيتزا بيبروني وسط',en:'Pepperoni Pizza Medium'},
- desc:{ckb:'پپرۆنی و پەنیر موزارێلا',
-       ar:'بيبروني مع جبن موزاريلا',
-       en:'Pepperoni with mozzarella'},
- price:9000, cal:880, prep:18},
-
-
+  {id:6, cat:'drinks',
+   img:'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=700&q=80&fm=webp',
+   name:{ckb:'ئاراش ئایس کافێ',ar:'آراش آيس كوفي',en:'Arash Iced Coffee'},
+   desc:{ckb:'کافێی دووبل شۆت لەگەڵ شیری بووخارەبووی سارد و شربەتی کارامێل',
+		 ar:'قهوة دبل شوت مع حليب مبخر بارد وشراب الكراميل',
+		 en:'Double-shot espresso with cold steamed milk and caramel syrup'},
+   price:3000, cal:220, prep:5},
 ];
 
 /* ════════════════════════════════════════════════════════════════
@@ -1012,39 +878,17 @@ function markRecent(id){
 }
 
 function toggleFav(id){
- S.favs.push(id);
- toast(t('fav_add'));
- saveFavs();
-
- document.querySelectorAll(`[data-fav="${id}"]`).forEach(btn=>{
-   btn.classList.add('on');
-   btn.setAttribute('aria-pressed','true');
-   updateBadge(btn, id);
- });
-
- renderSide();
- if(S.openId===id) syncModalFav();
-}
-
-function addOne(id){
-  S.favs.push(id);
-  saveFavs();
-  renderSide();
-  document.querySelectorAll(`[data-fav="${id}"]`).forEach(btn=>updateBadge(btn,id));
-}
-
-function removeOne(id){
-  const i = S.favs.lastIndexOf(id);
-  if(i !== -1) S.favs.splice(i, 1);
-  if(!S.favs.includes(id)){
-    document.querySelectorAll(`[data-fav="${id}"]`).forEach(btn=>{
-      btn.classList.remove('on');
-      btn.setAttribute('aria-pressed','false');
-    });
+  const item = S.favs.find(x => x.id === id);
+  if(item){ 
+    item.qty++; 
+    toast('×' + item.qty + ' زیادکرا'); 
+  } else { 
+    S.favs.push({id, qty:1}); 
+    toast(t('fav_add')); 
   }
   saveFavs();
   renderSide();
-  document.querySelectorAll(`[data-fav="${id}"]`).forEach(btn=>updateBadge(btn,id));
+  if(S.openId === id) syncModalFav();
 }
 
 
@@ -1099,77 +943,52 @@ function renderCats(){
 /* ════════════════════════════════════════════════════════════════
    8. RENDER SIDE SECTIONS
 ════════════════════════════════════════════════════════════════ */
-function miniCard(m){
- const count = S.favs.filter(x => x === m.id).length;
- return `
- <article class="mini" role="listitem" data-id="${m.id}" tabindex="0" aria-label="${loc(m.name)}">
-   <img class="mini-img" src="${IMG_CACHE[m.img] ? IMG_CACHE[m.img].src : m.img}" alt="${loc(m.name)}" loading="lazy"/>
-   <div class="mini-body">
-     <div class="mini-name">${loc(m.name)}</div>
-     <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px">
-       <div class="mini-price">${m.price.toLocaleString()} ${t('currency')}</div>
-       <div style="display:flex;align-items:center;gap:6px">
-         <button onclick="removeOne(${m.id})" style="width:22px;height:22px;border-radius:50%;background:var(--layer3);color:var(--cream);font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none">−</button>
-         <span style="color:var(--gold);font-weight:700;font-size:13px">${count}</span>
-         <button onclick="addOne(${m.id})" style="width:22px;height:22px;border-radius:50%;background:var(--gold);color:var(--ink);font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none">+</button>
-       </div>
-     </div>
-   </div>
- </article>`;
+// بەجێ ئەمەی هەیەت:
+
+// بیکە ئەمە:
+function miniCard(m){ return `
+  <article class="mini" role="listitem" data-id="${m.id}" tabindex="0">
+    <img class="mini-img" src="${m.img}" alt="${loc(m.name)}" loading="lazy"/>
+    <div class="mini-body">
+      <div class="mini-name">${loc(m.name)}</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px">
+        <div class="mini-price">${m.qty}× ${(m.price * m.qty).toLocaleString()} ${t('currency')}</div>
+        <button onclick="removeFromCart(${m.id})" style="background:rgba(255,0,0,.15);border:none;color:#e8224a;border-radius:50%;width:20px;height:20px;cursor:pointer;font-size:11px">✕</button>
+      </div>
+    </div>
+  </article>`; 
 }
 
-  
-  
 
 function renderSide(){
-  const favMs = MEALS.filter(m=>S.favs.includes(m.id));
+  const favMs = S.favs.map(x => ({
+    ...MEALS.find(m => m.id === x.id), 
+    qty: x.qty
+  })).filter(Boolean);
+
   const favSec = document.getElementById('favSec');
   favSec.style.display = favMs.length ? '' : 'none';
 
-  // تەنها نرخی گشتی نوێ بکەرەوە
-  const total = favMs.reduce((s,m)=>s+m.price, 0);
+  const total = favMs.reduce((s,m) => s + m.price * m.qty, 0);
   const el = document.getElementById('cartTotal');
   if(el) el.textContent = favMs.length ? total.toLocaleString()+' '+t('currency') : '';
 
-  // تەنها کاتێک پێویستە کارتەکان نوێ بکەرەوە
   const track = document.getElementById('favTrack');
-  const currentIds = [...track.querySelectorAll('[data-id]')].map(e=>Number(e.dataset.id));
-  const newIds = favMs.map(m=>m.id);
-  const changed = JSON.stringify(currentIds) !== JSON.stringify(newIds);
-
- if(changed){
-   [...track.querySelectorAll('[data-id]')].forEach(card=>{
-     if(!favMs.find(m=>m.id===Number(card.dataset.id))) card.remove();
-   });
-   favMs.forEach(m=>{
-     if(!track.querySelector(`[data-id="${m.id}"]`)){
-       const div = document.createElement('div');
-       div.innerHTML = miniCard(m);
-       track.appendChild(div.firstElementChild);
-     }
-   });
- }
-track.querySelectorAll('[data-id]').forEach(card=>{
-    const m = MEALS.find(x=>x.id===Number(card.dataset.id));
-    if(!m) return;
-    const nameEl = card.querySelector('.mini-name');
-    const priceEl = card.querySelector('.mini-price');
-    if(nameEl) nameEl.textContent = loc(m.name);
-    if(priceEl) priceEl.textContent = m.price.toLocaleString()+' '+t('currency');
-  });
+  track.innerHTML = favMs.map(m => miniCard(m)).join('');
 }
 
 const IMG_CACHE = {};
 function cachedImg(src, alt){
- if(!IMG_CACHE[src]){
-   const img = document.createElement('img');
-   img.src = src;
-   img.alt = alt;
-img.loading = 'eager';
-   IMG_CACHE[src] = img;
- }
- return IMG_CACHE[src].outerHTML;
+  if(!IMG_CACHE[src]){
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = alt;
+    img.loading = 'eager';
+    IMG_CACHE[src] = img;
+  }
+  return IMG_CACHE[src].outerHTML;
 }
+
 
 
 /* ════════════════════════════════════════════════════════════════
@@ -1263,31 +1082,20 @@ function renderMenu(){
       if(catEl)  catEl.textContent  = t('cat_'+m.cat);
     });
   }
-  
-  // badge هەموو دوگمەیەک نوێ بکەرەوە
-document.querySelectorAll('[data-fav]').forEach(btn=>{
-  updateBadge(btn, Number(btn.dataset.fav));
-});
-
 }
 
-
-function updateBadge(btn, id){
-  let badge = btn.querySelector('.cart-badge');
-  if(!badge){
-    badge = document.createElement('span');
-    badge.className = 'cart-badge';
-    btn.appendChild(badge);
-  }
-  const count = S.favs.filter(x => x === id).length;
-  badge.textContent = count > 0 ? count : '';
-  badge.classList.toggle('show', count > 0);
-}
 
 
 /* ════════════════════════════════════════════════════════════════
    12. RENDER ALL
 ════════════════════════════════════════════════════════════════ */
+function removeFromCart(id){
+  S.favs = S.favs.filter(x => x.id !== id);
+  saveFavs();
+  renderSide();
+  syncModalFav();
+}
+
 function renderAll(){
   renderCats();
   renderMenu();
