@@ -953,11 +953,12 @@ function miniCard(m){ return `
       <div class="mini-name">${loc(m.name)}</div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px">
         <div class="mini-price">${m.qty}× ${(m.price * m.qty).toLocaleString()} ${t('currency')}</div>
-        <button onclick="removeFromCart(${m.id})" style="background:rgba(255,0,0,.15);border:none;color:#e8224a;border-radius:50%;width:20px;height:20px;cursor:pointer;font-size:11px">✕</button>
+        <button onclick="removeFromCart(${m.id})" style="background:rgba(255,0,0,.15);border:none;color:#e8224a;border-radius:50%;width:20px;height:20px;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;padding:0">✕</button>
       </div>
     </div>
   </article>`; 
 }
+
 
 
 function renderSide(){
@@ -974,20 +975,28 @@ function renderSide(){
   if(el) el.textContent = favMs.length ? total.toLocaleString()+' '+t('currency') : '';
 
   const track = document.getElementById('favTrack');
-  track.innerHTML = favMs.map(m => miniCard(m)).join('');
+
+  // وێنە ریفرێش نەبێت
+  favMs.forEach(m => {
+    const existing = track.querySelector(`[data-id="${m.id}"]`);
+    if(existing){
+      const nameEl = existing.querySelector('.mini-name');
+      const priceEl = existing.querySelector('.mini-price');
+      if(nameEl) nameEl.textContent = loc(m.name);
+      if(priceEl) priceEl.textContent = `${m.qty}× ${(m.price * m.qty).toLocaleString()} ${t('currency')}`;
+    } else {
+      const div = document.createElement('div');
+      div.innerHTML = miniCard(m);
+      track.appendChild(div.firstElementChild);
+    }
+  });
+
+  // کارتی نەماوە بسڕەوە
+  track.querySelectorAll('[data-id]').forEach(card => {
+    if(!favMs.find(m => m.id === Number(card.dataset.id))) card.remove();
+  });
 }
 
-const IMG_CACHE = {};
-function cachedImg(src, alt){
-  if(!IMG_CACHE[src]){
-    const img = document.createElement('img');
-    img.src = src;
-    img.alt = alt;
-    img.loading = 'eager';
-    IMG_CACHE[src] = img;
-  }
-  return IMG_CACHE[src].outerHTML;
-}
 
 
 
@@ -1090,11 +1099,18 @@ function renderMenu(){
    12. RENDER ALL
 ════════════════════════════════════════════════════════════════ */
 function removeFromCart(id){
-  S.favs = S.favs.filter(x => x.id !== id);
+  const item = S.favs.find(x => x.id === id);
+  if(!item) return;
+  if(item.qty > 1){
+    item.qty--;
+  } else {
+    S.favs = S.favs.filter(x => x.id !== id);
+  }
   saveFavs();
   renderSide();
   syncModalFav();
 }
+
 
 function renderAll(){
   renderCats();
