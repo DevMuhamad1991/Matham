@@ -896,7 +896,7 @@ function listCard(m, idx){ return `
   <article class="lcard" role="listitem" data-id="${m.id}" tabindex="0"
     aria-label="${loc(m.name)}">
     <div class="lc-img">
-      <img src="${m.img}" alt="${loc(m.name)}" loading="lazy"/>
+<img src="${m.img}" alt="${loc(m.name)}" loading="${idx < 4 ? 'eager' : 'lazy'}"/>
     </div>
     <div class="lc-body">
       <div>
