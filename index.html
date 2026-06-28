@@ -878,19 +878,21 @@ function markRecent(id){
 }
 
 function toggleFav(id){
-  const item = S.favs.find(x => x.id === id);
-  if(item){ 
-    item.qty++; 
-    toast('×' + item.qty + ' زیادکرا'); 
-  } else { 
-    S.favs.push({id, qty:1}); 
-    toast(t('fav_add')); 
-  }
+  const i = S.favs.indexOf(id);
+  if(i===-1){ S.favs.push(id); toast(t('fav_add')); }
+  else      { S.favs.splice(i,1); toast(t('fav_rm')); }
   saveFavs();
-  renderSide();
-  if(S.openId === id) syncModalFav();
-}
 
+  // تەنها دوگمەی هەارتەکە بگۆڕە بەبێ ریفرێش
+  document.querySelectorAll(`[data-fav="${id}"]`).forEach(btn=>{
+    const on = S.favs.includes(id);
+    btn.classList.toggle('on', on);
+    btn.setAttribute('aria-pressed', String(on));
+  });
+
+  renderSide();
+  if(S.openId===id) syncModalFav();
+}
 
 
 /* ════════════════════════════════════════════════════════════════
@@ -943,61 +945,64 @@ function renderCats(){
 /* ════════════════════════════════════════════════════════════════
    8. RENDER SIDE SECTIONS
 ════════════════════════════════════════════════════════════════ */
-// بەجێ ئەمەی هەیەت:
-
-// بیکە ئەمە:
 function miniCard(m){ return `
-  <article class="mini" role="listitem" data-id="${m.id}" tabindex="0">
-    <img class="mini-img" src="${m.img}" alt="${loc(m.name)}" loading="lazy"/>
-    <div class="mini-body">
-      <div class="mini-name">${loc(m.name)}</div>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px">
-        <div class="mini-price">${m.qty}× ${(m.price * m.qty).toLocaleString()} ${t('currency')}</div>
-        <button onclick="removeFromCart(${m.id})" style="background:rgba(255,0,0,.15);border:none;color:#e8224a;border-radius:50%;width:20px;height:20px;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;padding:0">✕</button>
-      </div>
-    </div>
-  </article>`; 
-}
-
-
+  <article class="mini" role="listitem" data-id="${m.id}" tabindex="0" aria-label="${loc(m.name)}">
+<img class="mini-img" src="${IMG_CACHE[m.img] ? IMG_CACHE[m.img].src : m.img}" alt="${loc(m.name)}" loading="lazy"/>
+	<div class="mini-body">
+	  <div class="mini-name">${loc(m.name)}</div>
+	  <div class="mini-price">${m.price.toLocaleString()} ${t('currency')}</div>
+	</div>
+  </article>`; }
 
 function renderSide(){
-  const favMs = S.favs.map(x => ({
-    ...MEALS.find(m => m.id === x.id), 
-    qty: x.qty
-  })).filter(Boolean);
-
+  const favMs = MEALS.filter(m=>S.favs.includes(m.id));
   const favSec = document.getElementById('favSec');
   favSec.style.display = favMs.length ? '' : 'none';
 
-  const total = favMs.reduce((s,m) => s + m.price * m.qty, 0);
+  // تەنها نرخی گشتی نوێ بکەرەوە
+  const total = favMs.reduce((s,m)=>s+m.price, 0);
   const el = document.getElementById('cartTotal');
   if(el) el.textContent = favMs.length ? total.toLocaleString()+' '+t('currency') : '';
 
+  // تەنها کاتێک پێویستە کارتەکان نوێ بکەرەوە
   const track = document.getElementById('favTrack');
+  const currentIds = [...track.querySelectorAll('[data-id]')].map(e=>Number(e.dataset.id));
+  const newIds = favMs.map(m=>m.id);
+  const changed = JSON.stringify(currentIds) !== JSON.stringify(newIds);
 
-  // وێنە ریفرێش نەبێت
-  favMs.forEach(m => {
-    const existing = track.querySelector(`[data-id="${m.id}"]`);
-    if(existing){
-      const nameEl = existing.querySelector('.mini-name');
-      const priceEl = existing.querySelector('.mini-price');
-      if(nameEl) nameEl.textContent = loc(m.name);
-      if(priceEl) priceEl.textContent = `${m.qty}× ${(m.price * m.qty).toLocaleString()} ${t('currency')}`;
-    } else {
-      const div = document.createElement('div');
-      div.innerHTML = miniCard(m);
-      track.appendChild(div.firstElementChild);
-    }
-  });
-
-  // کارتی نەماوە بسڕەوە
-  track.querySelectorAll('[data-id]').forEach(card => {
-    if(!favMs.find(m => m.id === Number(card.dataset.id))) card.remove();
+ if(changed){
+   [...track.querySelectorAll('[data-id]')].forEach(card=>{
+     if(!favMs.find(m=>m.id===Number(card.dataset.id))) card.remove();
+   });
+   favMs.forEach(m=>{
+     if(!track.querySelector(`[data-id="${m.id}"]`)){
+       const div = document.createElement('div');
+       div.innerHTML = miniCard(m);
+       track.appendChild(div.firstElementChild);
+     }
+   });
+ }
+track.querySelectorAll('[data-id]').forEach(card=>{
+    const m = MEALS.find(x=>x.id===Number(card.dataset.id));
+    if(!m) return;
+    const nameEl = card.querySelector('.mini-name');
+    const priceEl = card.querySelector('.mini-price');
+    if(nameEl) nameEl.textContent = loc(m.name);
+    if(priceEl) priceEl.textContent = m.price.toLocaleString()+' '+t('currency');
   });
 }
 
-
+const IMG_CACHE = {};
+function cachedImg(src, alt){
+ if(!IMG_CACHE[src]){
+   const img = document.createElement('img');
+   img.src = src;
+   img.alt = alt;
+img.loading = 'eager';
+   IMG_CACHE[src] = img;
+ }
+ return IMG_CACHE[src].outerHTML;
+}
 
 
 /* ════════════════════════════════════════════════════════════════
@@ -1098,20 +1103,6 @@ function renderMenu(){
 /* ════════════════════════════════════════════════════════════════
    12. RENDER ALL
 ════════════════════════════════════════════════════════════════ */
-function removeFromCart(id){
-  const item = S.favs.find(x => x.id === id);
-  if(!item) return;
-  if(item.qty > 1){
-    item.qty--;
-  } else {
-    S.favs = S.favs.filter(x => x.id !== id);
-  }
-  saveFavs();
-  renderSide();
-  syncModalFav();
-}
-
-
 function renderAll(){
   renderCats();
   renderMenu();
