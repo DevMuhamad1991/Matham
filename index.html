@@ -536,6 +536,34 @@ body.lang-ar  .modal-name{font-family:'Noto Naskh Arabic','Cormorant Garamond',s
   font-family: 'Noto Sans Arabic', Georgia, serif !important;
 }
 
+.gc-fav, .lc-fav {
+  position: relative;
+}
+.cart-badge {
+  position: absolute;
+  top: -5px;
+  inset-inline-end: -5px;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 99px;
+  background: var(--gold);
+  color: var(--ink);
+  font-size: 9px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0);
+  transition: all .2s var(--ease);
+}
+.cart-badge.show {
+  opacity: 1;
+  transform: scale(1);
+}
+
 </style>
 </head>
 <body class="lang-ckb" dir="rtl">
@@ -991,10 +1019,13 @@ function toggleFav(id){
 
   // تەنها دوگمەی هەارتەکە بگۆڕە بەبێ ریفرێش
   document.querySelectorAll(`[data-fav="${id}"]`).forEach(btn=>{
-    const on = S.favs.includes(id);
-    btn.classList.toggle('on', on);
-    btn.setAttribute('aria-pressed', String(on));
-  });
+  const on = S.favs.includes(id);
+  btn.classList.toggle('on', on);
+  btn.setAttribute('aria-pressed', String(on));
+  // badge نوێ بکەرەوە
+  updateBadge(btn, id);
+});
+
 
   renderSide();
   if(S.openId===id) syncModalFav();
@@ -1202,9 +1233,28 @@ function renderMenu(){
       if(catEl)  catEl.textContent  = t('cat_'+m.cat);
     });
   }
+  
+  // badge هەموو دوگمەیەک نوێ بکەرەوە
+document.querySelectorAll('[data-fav]').forEach(btn=>{
+  updateBadge(btn, Number(btn.dataset.fav));
+});
+
 }
 
 
+function updateBadge(btn, id){
+  let badge = btn.querySelector('.cart-badge');
+  if(!badge){
+    badge = document.createElement('span');
+    badge.className = 'cart-badge';
+    btn.appendChild(badge);
+  }
+  const count = S.favs.filter(x => x === id).length;
+  // ئەمە 0 یا 1 دەبێت — ئەگەر پێویستت بوو ژمارەی زیاد بکەی گۆڕانی دیکە پێویستە
+  const inCart = S.favs.includes(id);
+  badge.textContent = inCart ? '✓' : '';
+  badge.classList.toggle('show', inCart);
+}
 
 /* ════════════════════════════════════════════════════════════════
    12. RENDER ALL
