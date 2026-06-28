@@ -814,10 +814,6 @@ const filtered = () => {
   return MEALS.filter(m => S.cat==='all' || m.cat===S.cat);
 };
 
-function markRecent(id){
-  S.recent = [id, ...S.recent.filter(r=>r!==id)].slice(0,10);
-  saveRecent();
-}
 
 
 
@@ -880,45 +876,40 @@ function renderCats(){
 ════════════════════════════════════════════════════════════════ */
 function gridCard(m, idx){ return `
   <article class="gcard" role="listitem" data-id="${m.id}" tabindex="0"
-	aria-label="${loc(m.name)}">
-	<div class="gc-img">
-	  <img src="${m.img}" alt="${loc(m.name)}" loading="lazy"/>
-	  <span class="gc-price-float">${m.price.toLocaleString()} <small>${t('currency')}</small></span>
-	  <button class="gc-fav${S.favs.includes(m.id)?' on':''}" data-fav="${m.id}"
-		aria-label="${t(S.favs.includes(m.id)?'fav_rm':'fav_add')}" aria-pressed="${S.favs.includes(m.id)}">
-<i class="fa-solid fa-basket-shopping" aria-hidden="true"></i>
-	  </button>
-	</div>
-	<div class="gc-body">
-	  <div class="gc-name">${loc(m.name)}</div>
-	</div>
+    aria-label="${loc(m.name)}">
+    <div class="gc-img">
+      <img src="${m.img}" alt="${loc(m.name)}" loading="lazy"/>
+    </div>
+    <div class="gc-body">
+      <div class="gc-name">${loc(m.name)}</div>
+      <div style="font-size:13px;font-weight:600;color:var(--gold);margin-top:4px">
+        ${m.price.toLocaleString()} ${t('currency')}
+      </div>
+    </div>
   </article>`; }
+
 
 /* ════════════════════════════════════════════════════════════════
    10. RENDER LIST CARD
 ════════════════════════════════════════════════════════════════ */
 function listCard(m, idx){ return `
   <article class="lcard" role="listitem" data-id="${m.id}" tabindex="0"
-	aria-label="${loc(m.name)}">
-	<div class="lc-img">
-<img src="${m.img}" alt="${loc(m.name)}" loading="lazy"/>
-	</div>
-	<div class="lc-body">
-	  <div>
-		<div class="lc-cat">${t('cat_'+m.cat)}</div>
-		<div class="lc-name">${loc(m.name)}</div>
-	  </div>
-	  <div class="lc-footer">
-		<div>
-		  <span class="lc-price">${m.price.toLocaleString()}</span>
-		  <span class="lc-price-cur">${t('currency')}</span>
-		</div>
-		<button class="lc-fav${S.favs.includes(m.id)?' on':''}" data-fav="${m.id}"
-		  aria-label="${t(S.favs.includes(m.id)?'fav_rm':'fav_add')}" aria-pressed="${S.favs.includes(m.id)}">
-<i class="fa-solid fa-basket-shopping" aria-hidden="true"></i>
-		</button>
-	  </div>
-	</div>
+    aria-label="${loc(m.name)}">
+    <div class="lc-img">
+      <img src="${m.img}" alt="${loc(m.name)}" loading="lazy"/>
+    </div>
+    <div class="lc-body">
+      <div>
+        <div class="lc-cat">${t('cat_'+m.cat)}</div>
+        <div class="lc-name">${loc(m.name)}</div>
+      </div>
+      <div class="lc-footer">
+        <div>
+          <span class="lc-price">${m.price.toLocaleString()}</span>
+          <span class="lc-price-cur">${t('currency')}</span>
+        </div>
+      </div>
+    </div>
   </article>`; }
 
 /* ════════════════════════════════════════════════════════════════
@@ -976,7 +967,6 @@ function renderMenu(){
 function renderAll(){
   renderCats();
   renderMenu();
-  renderSide();
   applyI18n();
 }
 
@@ -1002,7 +992,7 @@ function openModal(id){
   if(!m) return;
   S.openId = id;
   markRecent(id);
-  renderSide();
+  
 
 const img = document.getElementById('mImg');
 if(img.dataset.loaded !== String(id)){
@@ -1017,7 +1007,6 @@ img.alt = loc(m.name);
 	<div class="mchip"><i class="fa-solid fa-fire" aria-hidden="true"></i>${m.cal} ${t('calories')}</div>
 	<div class="mchip"><i class="fa-regular fa-clock" aria-hidden="true"></i>${m.prep} ${t('prep_min')}</div>
   `;
-  syncModalFav();
   applyI18n();
 
   document.getElementById('overlay').classList.add('open');
