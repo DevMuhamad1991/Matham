@@ -1012,24 +1012,41 @@ function markRecent(id){
 }
 
 function toggleFav(id){
-  const i = S.favs.indexOf(id);
-  if(i===-1){ S.favs.push(id); toast(t('fav_add')); }
-  else      { S.favs.splice(i,1); toast(t('fav_rm')); }
-  saveFavs();
+ S.favs.push(id);
+ toast(t('fav_add'));
+ saveFavs();
 
-  // تەنها دوگمەی هەارتەکە بگۆڕە بەبێ ریفرێش
-  document.querySelectorAll(`[data-fav="${id}"]`).forEach(btn=>{
-  const on = S.favs.includes(id);
-  btn.classList.toggle('on', on);
-  btn.setAttribute('aria-pressed', String(on));
-  // badge نوێ بکەرەوە
-  updateBadge(btn, id);
-});
+ document.querySelectorAll(`[data-fav="${id}"]`).forEach(btn=>{
+   btn.classList.add('on');
+   btn.setAttribute('aria-pressed','true');
+   updateBadge(btn, id);
+ });
 
-
-  renderSide();
-  if(S.openId===id) syncModalFav();
+ renderSide();
+ if(S.openId===id) syncModalFav();
 }
+
+function addOne(id){
+  S.favs.push(id);
+  saveFavs();
+  renderSide();
+  document.querySelectorAll(`[data-fav="${id}"]`).forEach(btn=>updateBadge(btn,id));
+}
+
+function removeOne(id){
+  const i = S.favs.lastIndexOf(id);
+  if(i !== -1) S.favs.splice(i, 1);
+  if(!S.favs.includes(id)){
+    document.querySelectorAll(`[data-fav="${id}"]`).forEach(btn=>{
+      btn.classList.remove('on');
+      btn.setAttribute('aria-pressed','false');
+    });
+  }
+  saveFavs();
+  renderSide();
+  document.querySelectorAll(`[data-fav="${id}"]`).forEach(btn=>updateBadge(btn,id));
+}
+
 
 
 /* ════════════════════════════════════════════════════════════════
@@ -1082,14 +1099,27 @@ function renderCats(){
 /* ════════════════════════════════════════════════════════════════
    8. RENDER SIDE SECTIONS
 ════════════════════════════════════════════════════════════════ */
-function miniCard(m){ return `
-  <article class="mini" role="listitem" data-id="${m.id}" tabindex="0" aria-label="${loc(m.name)}">
-<img class="mini-img" src="${IMG_CACHE[m.img] ? IMG_CACHE[m.img].src : m.img}" alt="${loc(m.name)}" loading="lazy"/>
-	<div class="mini-body">
-	  <div class="mini-name">${loc(m.name)}</div>
-	  <div class="mini-price">${m.price.toLocaleString()} ${t('currency')}</div>
-	</div>
-  </article>`; }
+function miniCard(m){
+ const count = S.favs.filter(x => x === m.id).length;
+ return `
+ <article class="mini" role="listitem" data-id="${m.id}" tabindex="0" aria-label="${loc(m.name)}">
+   <img class="mini-img" src="${IMG_CACHE[m.img] ? IMG_CACHE[m.img].src : m.img}" alt="${loc(m.name)}" loading="lazy"/>
+   <div class="mini-body">
+     <div class="mini-name">${loc(m.name)}</div>
+     <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px">
+       <div class="mini-price">${m.price.toLocaleString()} ${t('currency')}</div>
+       <div style="display:flex;align-items:center;gap:6px">
+         <button onclick="removeOne(${m.id})" style="width:22px;height:22px;border-radius:50%;background:var(--layer3);color:var(--cream);font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none">−</button>
+         <span style="color:var(--gold);font-weight:700;font-size:13px">${count}</span>
+         <button onclick="addOne(${m.id})" style="width:22px;height:22px;border-radius:50%;background:var(--gold);color:var(--ink);font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none">+</button>
+       </div>
+     </div>
+   </div>
+ </article>`;
+}
+
+  
+  
 
 function renderSide(){
   const favMs = MEALS.filter(m=>S.favs.includes(m.id));
@@ -1251,9 +1281,9 @@ function updateBadge(btn, id){
   }
   const count = S.favs.filter(x => x === id).length;
   // ئەمە 0 یا 1 دەبێت — ئەگەر پێویستت بوو ژمارەی زیاد بکەی گۆڕانی دیکە پێویستە
-  const inCart = S.favs.includes(id);
-  badge.textContent = inCart ? '✓' : '';
-  badge.classList.toggle('show', inCart);
+  const count = S.favs.filter(x => x === id).length;
+badge.textContent = count > 0 ? count : '';
+badge.classList.toggle('show', count > 0);
 }
 
 /* ════════════════════════════════════════════════════════════════
