@@ -878,7 +878,7 @@ function gridCard(m, idx){ return `
   <article class="gcard" role="listitem" data-id="${m.id}" tabindex="0"
     aria-label="${loc(m.name)}">
     <div class="gc-img">
-      <img src="${m.img}" alt="${loc(m.name)}" loading="lazy"/>
+<img src="${m.img}" alt="${loc(m.name)}" loading="${idx < 4 ? 'eager' : 'lazy'}"/>
     </div>
     <div class="gc-body">
       <div class="gc-name">${loc(m.name)}</div>
@@ -991,7 +991,7 @@ function openModal(id){
   const m = MEALS.find(x=>x.id===id);
   if(!m) return;
   S.openId = id;
-  markRecent(id);
+
   
 
 const img = document.getElementById('mImg');
@@ -1076,8 +1076,7 @@ document.getElementById('menuGrid').addEventListener('keydown', e=>{
 
 /* ✅ List View — نوێ زیادکرا */
 document.getElementById('menuList').addEventListener('click', e=>{
- const fav = e.target.closest('[data-fav]');
- if(fav){ e.stopPropagation(); toggleFav(Number(fav.dataset.fav)); return; }
+
  const card = e.target.closest('[data-id]');
  if(card) openModal(Number(card.dataset.id));
 });
