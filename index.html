@@ -1280,11 +1280,10 @@ function updateBadge(btn, id){
     btn.appendChild(badge);
   }
   const count = S.favs.filter(x => x === id).length;
-  // ئەمە 0 یا 1 دەبێت — ئەگەر پێویستت بوو ژمارەی زیاد بکەی گۆڕانی دیکە پێویستە
-  const count = S.favs.filter(x => x === id).length;
-badge.textContent = count > 0 ? count : '';
-badge.classList.toggle('show', count > 0);
+  badge.textContent = count > 0 ? count : '';
+  badge.classList.toggle('show', count > 0);
 }
+
 
 /* ════════════════════════════════════════════════════════════════
    12. RENDER ALL
