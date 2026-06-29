@@ -407,7 +407,22 @@
 	  <button class="logout-btn" onclick="logout()">
 		<i class="ri-logout-box-r-line"></i><span>دەرچوون</span>
 	  </button>
-	</div>
+
+	
+	  <div id="db-status" style="
+    display:flex;align-items:center;gap:7px;
+    padding:9px 12px;margin-top:8px;
+    border-radius:10px;background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.08)">
+    <span id="db-dot" style="
+      width:8px;height:8px;border-radius:50%;
+      background:#666;flex-shrink:0;
+      transition:background 0.3s"></span>
+    <span id="db-label" style="
+      font-size:0.75rem;font-weight:600;
+      color:rgba(255,255,255,0.45)">چاوەڕوان...</span>
+  </div>
+			</div>
   </nav>
 
   <div id="topbar">
@@ -732,6 +747,7 @@ async function initApp(){
   updateSidebarBadge();
   renderReports('daily');
 		startRealtime();
+		checkDbConnection();
 }
 
 /* ── REALTIME ── */
@@ -1357,6 +1373,34 @@ function drawTopItemsChart(period) {   // ← period زیاد بکە
           border-radius:8px;transition:width .7s cubic-bezier(.4,0,.2,1)"></div>
       </div>
     </div>`).join('');
+}
+
+function checkDbConnection() {
+  const dot   = document.getElementById('db-dot');
+  const label = document.getElementById('db-label');
+
+  fetch(`${SUPABASE_URL}/rest/v1/orders?limit=1`, {
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY
+    }
+  })
+  .then(res => {
+    if (res.ok) {
+      dot.style.background   = '#2E8B57';
+      dot.style.boxShadow    = '0 0 6px rgba(46,139,87,0.7)';
+      label.style.color      = 'rgba(46,139,87,0.9)';
+      label.textContent      = 'داتابەیس پەیوەستە';
+    } else {
+      throw new Error();
+    }
+  })
+  .catch(() => {
+    dot.style.background  = '#D64545';
+    dot.style.boxShadow   = '0 0 6px rgba(214,69,69,0.7)';
+    label.style.color     = 'rgba(214,69,69,0.8)';
+    label.textContent     = 'پەیوەندی نییە';
+  });
 }
 
 /* ── TOAST ── */
