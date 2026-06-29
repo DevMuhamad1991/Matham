@@ -1237,18 +1237,27 @@ async function submitOrder() {
 }
 
 function shareLocation() {
-  if(!navigator.geolocation) return;
+  if(!navigator.geolocation) {
+    alert('براوزەرەکەت لۆکەیشن پشتگیری ناکات');
+    return;
+  }
   
-  navigator.geolocation.getCurrentPosition(pos => {
-    const lat = pos.coords.latitude;
-    const lng = pos.coords.longitude;
-    const url = `https://www.google.com/maps?q=${lat},${lng}`;
-    document.getElementById('f-address').value = url;
-  });
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+      const url = `https://www.google.com/maps?q=${lat},${lng}`;
+      document.getElementById('f-address').value = url;
+    },
+    err => {
+      alert('لۆکەیشن نەگیرا — تکایە إذن بدە یان HTTPS بەکاربهێنە');
+    }
+  );
 }
 
 
-	function resetAfterOrder() {
+
+function resetAfterOrder() {
   // تەنها سەبەتە پاک دەکەینەوە — زانیاری کریار دەمێنێتەوە
   cart=[]; saveCart(); updateCartBar(); renderCartDrawer();
   
@@ -1261,6 +1270,7 @@ function shareLocation() {
   document.getElementById('checkout-success-view').classList.add('hidden');
   closeCheckout();
 }
+
 
 
 	/* ---- INIT ---- */
