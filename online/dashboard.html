@@ -936,7 +936,7 @@ const isMap = addr && addr.includes('google.com/maps');
 const addressHTML = isMap
   ? `<a href="${addr}" target="_blank" 
        style="color:var(--accent);font-weight:700;display:flex;align-items:center;gap:4px">
-       <i class="ri-map-pin-line"></i> لۆکەیشن ببینە لە مەپ
+       <i class="ri-map-pin-line"></i> لۆکەیشن ببینە لە ماپ
      </a>`
   : addr || '—';
 
@@ -981,11 +981,16 @@ const addressHTML = isMap
 	  <div>
 		<div class="detail-label" style="margin-bottom:8px">گۆڕینی دۆخ</div>
 		<div class="status-controls">
-		  <button class="status-btn s-pending   ${order.status==='pending'  ?'current':''}" onclick="setStatus('${order.id}','pending')">چاوەڕوان</button>
-		  <button class="status-btn s-preparing ${order.status==='preparing'?'current':''}" onclick="setStatus('${order.id}','preparing')">ئامادەکردن</button>
-		  <button class="status-btn s-done	  ${order.status==='done'	 ?'current':''}" onclick="setStatus('${order.id}','done')">تەواوبوو</button>
-		  <button class="status-btn s-cancelled ${order.status==='cancelled'?'current':''}" onclick="setStatus('${order.id}','cancelled')">هەڵوەشێندراو</button>
-		</div>
+  <button class="status-btn s-preparing ${order.status==='preparing'?'current':''}" 
+    onclick="setStatus('${order.id}','preparing')">
+    <i class="ri-check-double-line"></i> قبوڵکردن و ئامادەکردن
+  </button>
+  <button class="status-btn s-cancelled ${order.status==='cancelled'?'current':''}" 
+    onclick="setStatus('${order.id}','cancelled')">
+    <i class="ri-close-circle-line"></i> هەڵوەشاندنەوە
+  </button>
+</div>
+
 	  </div>
 	</div>`;
   return div;
@@ -1011,6 +1016,33 @@ async function setStatus(id, status) {
   }
 
   order.status = status;
+		
+		// WhatsApp ئاگادارکردنەوەی کریار
+let waMsg = '';
+let custPhone = order.customer.phone.replace(/[\s\-\(\)]/g, '');
+if (custPhone.startsWith('0')) custPhone = '964' + custPhone.slice(1);
+
+if (status === 'preparing') {
+  waMsg = encodeURIComponent(
+
+    `سڵاو ${order.customer.name}\n` +
+    `داواکارییەکەت ${order.id} قبوڵکرا\n` +
+    `ئێستا ئامادەی دەکەین\n` +
+    `کۆی گشتی: ${fmt(orderTotal(order))}`
+  );
+} else if (status === 'cancelled') {
+  waMsg = encodeURIComponent(
+    `سڵاو ${order.customer.name}\n` +
+    `داواکارییەکەت ${order.id} هەڵوەشێندراوە\n` +
+    `تکایە پەیوەندیمان پێوە بکە بۆ زانیاری زیاتر.`
+  );
+}
+if (waMsg && custPhone.length > 6) {
+  window.open(`https://wa.me/${custPhone}?text=${waMsg}`, '_blank');
+}
+
+
+		
   const existing = document.getElementById('oc-' + id);
   if (existing) {
     const was = existing.classList.contains('expanded');
