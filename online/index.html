@@ -1194,7 +1194,16 @@ async function submitOrder() {
     document.getElementById(id).style.borderColor = val ? '' : 'var(--danger)';
     if(val) document.getElementById(id).style.boxShadow='';
   });
-  if(!name||!phone||!address) return;
+const address = document.getElementById('f-address').value.trim();
+if(!name||!phone||!address) return;
+
+// چێک بکە ئایا لۆکەیشنە
+if(!address.includes('google.com/maps')) {
+  document.getElementById('f-address').style.borderColor = 'var(--danger)';
+  document.getElementById('f-address').placeholder = '📍 تکایە لۆکەیشنەکەت شێر بکە!';
+  return;
+}
+
 
   const note  = document.getElementById('f-note').value.trim();
   const total = getTotal();
@@ -1234,6 +1243,21 @@ async function submitOrder() {
 
   document.getElementById('checkout-form-view').classList.add('hidden');
   document.getElementById('checkout-success-view').classList.remove('hidden');
+  
+  // WhatsApp بۆ خاوەنی خواردنگە
+const ownerPhone = '9647509628683';
+const itemsText = items.map(i => `• ${i.name} × ${i.qty} — ${(i.price*i.qty).toLocaleString()} IQD`).join('\n');
+const waMsg = encodeURIComponent(
+  `🛵 داواکاری نوێ!\n\n` +
+  `👤 ناو: ${name}\n` +
+  `📞 تەلەفۆن: ${phone}\n` +
+  `📍 ناونیشان: ${address}\n` +
+  `${note ? '📝 تێبینی: ' + note + '\n' : ''}` +
+  `\n🍽️ خواردنەکان:\n${itemsText}\n\n` +
+  `💰 کۆی گشتی: ${total.toLocaleString()} IQD`
+);
+window.open(`https://wa.me/${ownerPhone}?text=${waMsg}`, '_blank');
+
 }
 
 function shareLocation() {
