@@ -1190,19 +1190,18 @@ async function submitOrder() {
   const address = document.getElementById('f-address').value.trim();
 
   // validate
-  [['f-name',name],['f-phone',phone],['f-address',address]].forEach(([id,val])=>{
+    [['f-name',name],['f-phone',phone],['f-address',address]].forEach(([id,val])=>{
     document.getElementById(id).style.borderColor = val ? '' : 'var(--danger)';
     if(val) document.getElementById(id).style.boxShadow='';
   });
-const address = document.getElementById('f-address').value.trim();
-if(!name||!phone||!address) return;
+  if(!name||!phone||!address) return;
 
-// چێک بکە ئایا لۆکەیشنە
-if(!address.includes('google.com/maps')) {
-  document.getElementById('f-address').style.borderColor = 'var(--danger)';
-  document.getElementById('f-address').placeholder = '📍 تکایە لۆکەیشنەکەت شێر بکە!';
-  return;
-}
+  if(!address.includes('google.com/maps')) {
+    document.getElementById('f-address').style.borderColor = 'var(--danger)';
+    document.getElementById('f-address').placeholder = '📍 تکایە لۆکەیشنەکەت شێر بکە!';
+    return;
+  }
+
 
 
   const note  = document.getElementById('f-note').value.trim();
