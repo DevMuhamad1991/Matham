@@ -1084,24 +1084,6 @@
 	const getCount	= ()=> cart.reduce((s,i)=>s+i.qty, 0);
 	const getTotal	= ()=> cart.reduce((s,i)=>s+(i.price*i.qty), 0);
 
-// ← ئەم دووانە زیاد بکە ئێرە
-function saveCustomer() {
-  const name    = document.getElementById('f-name').value.trim();
-  const phone   = document.getElementById('f-phone').value.trim();
-  const address = document.getElementById('f-address').value.trim();
-  if(name||phone||address)
-    localStorage.setItem('arash_customer', JSON.stringify({name,phone,address}));
-}
-
-function loadCustomer() {
-  try {
-    const c = JSON.parse(localStorage.getItem('arash_customer')||'{}');
-    if(c.name)    document.getElementById('f-name').value    = c.name;
-    if(c.phone)   document.getElementById('f-phone').value   = c.phone;
-    if(c.address) document.getElementById('f-address').value = c.address;
-  } catch(e) {}
-}
-
 	function addToCart(id) {
 	  const item=MENU_DATA.find(m=>m.id===id); if(!item) return;
 	  const ex=cart.find(c=>c.id===id);
@@ -1170,10 +1152,9 @@ function loadCustomer() {
 
 	/* ---- CHECKOUT ---- */
 	function openCheckout() {
-	  if(cart.length===0) return;
-	  closeCart(); renderModalSummary();
-    loadCustomer();
-	  document.getElementById('checkout-overlay').classList.add('open');
+  if(cart.length===0) return;
+  closeCart(); renderModalSummary();
+  document.getElementById('checkout-overlay').classList.add('open');
 	  document.body.style.overflow='hidden';
 	}
 	function closeCheckout() {
