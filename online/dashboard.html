@@ -930,6 +930,17 @@ function buildOrderCard(order){
   const div=document.createElement('div');
   div.className='order-card'; div.id='oc-'+order.id;
 
+	const addr = order.customer.address;
+const isMap = addr && addr.includes('google.com/maps');
+
+const addressHTML = isMap
+  ? `<a href="${addr}" target="_blank" 
+       style="color:var(--accent);font-weight:700;display:flex;align-items:center;gap:4px">
+       <i class="ri-map-pin-line"></i> لۆکەیشن ببینە لە مەپ
+     </a>`
+  : addr || '—';
+
+
   // WhatsApp link — clean phone (remove spaces/dashes, add 964 country code)
   let phone = order.customer.phone.replace(/[\s\-\(\)]/g,'');
   if(phone.startsWith('0')) phone='964'+phone.slice(1);
@@ -951,7 +962,7 @@ function buildOrderCard(order){
 	</div>
 	<div class="order-card-body">
 	  <div class="order-details-grid">
-		<div class="order-detail-item"><div class="detail-label">ناونیشان</div><div class="detail-value">${order.customer.address||'—'}</div></div>
+		<div class="order-detail-item"><div class="detail-label">ناونیشان</div><div class="detail-value">${addressHTML}</div></div>
 		<div class="order-detail-item"><div class="detail-label">کاتی داواکاری</div><div class="detail-value">${order.time}</div></div>
 		${order.note?`<div class="order-detail-item" style="grid-column:1/-1"><div class="detail-label">تێبینی</div><div class="detail-value">${order.note}</div></div>`:''}
 	  </div>
