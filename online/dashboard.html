@@ -1155,11 +1155,13 @@ function renderReports(period){
 	<div class="report-stat"><div class="report-stat-val">${(maxRevDay.revenue/1000).toFixed(0)}K</div><div class="report-stat-label">باشترین داهاتی یەک بەشێک</div></div>
   `;
 
+drawBarChart(range.labels, data);          // ← زیاد بکە
 drawOrdersChart(range.labels, data);
 const topChartEl = document.getElementById('top-items-chart');
-if (topChartEl) topChartEl.innerHTML = drawTopItemsChart();
-  renderTopItems(period);
-  drawDonut();
+if (topChartEl) topChartEl.innerHTML = drawTopItemsChart(period); // ← period زیاد بکە
+renderTopItems(period);
+drawDonut();
+
 }
 
 function drawBarChart(labels, data){
@@ -1328,8 +1330,8 @@ function drawDonut(){
 	</div>`).join('');
 }
 
-function drawTopItemsChart() {
-  // داتا کۆبکەرەوە
+function drawTopItemsChart(period) {   // ← period زیاد بکە
+  const range = getDateRange(period); // داتا کۆبکەرەوە
   const itemMap = {};
   ORDERS.filter(o => o.status === 'done').forEach(o => {
     o.items.forEach(i => {
