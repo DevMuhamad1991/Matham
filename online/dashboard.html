@@ -389,20 +389,16 @@
 	  </div>
 	</div>
 	<div class="sidebar-nav">
-	  <div class="nav-section-label">سەرەکی</div>
 	  <div class="nav-item active" onclick="showPage('dashboard',this)">
 		<i class="ri-dashboard-3-line"></i><span>داشبۆرد</span>
 	  </div>
-	  <div class="nav-section-label" style="margin-top:6px">بەڕێوەبردن</div>
 	  <div class="nav-item" onclick="showPage('orders',this)">
 		<i class="ri-file-list-3-line"></i><span>داواکارییەکان</span>
 		<span class="badge" id="sidebar-pending-count">0</span>
 	  </div>
-	  <div class="nav-section-label" style="margin-top:6px">شیکاری</div>
 	  <div class="nav-item" onclick="showPage('reports',this)">
 		<i class="ri-bar-chart-2-line"></i><span>راپۆرتەکان</span>
 	  </div>
-	  <div class="nav-section-label" style="margin-top:6px">ڕێکخستن</div>
 	  <div class="nav-item" onclick="showPage('settings',this)">
 		<i class="ri-settings-4-line"></i><span>ڕێکخستنەکان</span>
 	  </div>
@@ -459,7 +455,6 @@
 		  <option value="all">هەموو دۆخەکان</option>
 		  <option value="pending">چاوەڕوان</option>
 		  <option value="preparing">ئامادەکردن</option>
-		  <option value="done">تەواوبوو</option>
 		  <option value="cancelled">هەڵوەشێندراو</option>
 		</select>
 	  </div>
@@ -873,7 +868,7 @@ function renderDashboard(){
   document.getElementById('stats-grid').innerHTML=`
 	<div class="stat-card"><div class="stat-icon orange"><i class="ri-file-list-3-line"></i></div><div class="stat-info"><div class="stat-value">${total}</div><div class="stat-label">کۆی داواکارییەکان</div></div></div>
 	<div class="stat-card"><div class="stat-icon orange"><i class="ri-time-line"></i></div><div class="stat-info"><div class="stat-value">${pending}</div><div class="stat-label">چاوەڕوانی وەڵام</div></div></div>
-	<div class="stat-card"><div class="stat-icon green"><i class="ri-checkbox-circle-line"></i></div><div class="stat-info"><div class="stat-value">${done}</div><div class="stat-label">تەواوبوو</div></div></div>
+	<div class="stat-card"><div class="stat-icon green"><i class="ri-checkbox-circle-line"></i></div><div class="stat-info"><div class="stat-value">${cancelled}</div><div class="stat-label">تەواوبوو</div></div></div>
 	<div class="stat-card"><div class="stat-icon blue"><i class="ri-money-dollar-circle-line"></i></div><div class="stat-info"><div class="stat-value">${(revenue/1000).toFixed(0)}K</div><div class="stat-label">داهاتی IQD</div><div class="stat-trend">تەنها داواکارییە تەواوبووەکان</div></div></div>
   `;
 
