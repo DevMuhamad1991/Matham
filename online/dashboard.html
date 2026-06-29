@@ -553,6 +553,10 @@
 <div id="toast"></div>
 
 <script>
+
+const SUPABASE_URL = 'https://ciecyvmumszwrvlwybkz.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_bI7a9JbEu8pJNuEwcVBz2Q_7ZlC9AYx';
+
 /* ── PIN ── */
 const CORRECT_PIN = '1991';
 let pinInput = '', currentPin = CORRECT_PIN;
@@ -629,17 +633,40 @@ const DEMO_ORDERS = [
   },
 ];
 
-function loadOrders(){
-  // Try to read real orders from localStorage; fall back to demo
+async function loadOrders() {
   try {
-	const stored = localStorage.getItem(ORDERS_KEY);
-	if(stored){
-	  const parsed = JSON.parse(stored);
-	  if(Array.isArray(parsed) && parsed.length > 0) return parsed;
-	}
-  } catch(e){}
-  return DEMO_ORDERS;
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/orders?select=*&order=created_at.desc`,
+      {
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_KEY
+        }
+      }
+    );
+    if (!res.ok) throw new Error();
+    const rows = await res.json();
+    // transform to the shape dashboard expects
+    return rows.map(r => ({
+      id: '#' + String(r.id).padStart(4,'0'),
+      status: r.status,
+      time: new Date(r.created_at).toLocaleTimeString('ku',{hour:'2-digit',minute:'2-digit'}),
+      date: r.created_at.slice(0,10),
+      customer: {
+        name:    r.customer_name,
+        phone:   r.customer_phone,
+        address: r.customer_address
+      },
+      note:  r.note || '',
+      items: r.items || [],
+      _dbId: r.id   // keep real id for status updates
+    }));
+  } catch(e) {
+    console.error('Supabase fetch failed:', e);
+    return DEMO_ORDERS;
+  }
 }
+
 
 function saveOrders(orders){
   try{ localStorage.setItem(ORDERS_KEY, JSON.stringify(orders)); }catch(e){}
@@ -684,9 +711,8 @@ const fmt = n => n.toLocaleString() + ' IQD';
 const orderTotal = o => o.items.reduce((s,i)=>s+i.price*i.qty,0);
 
 /* ── INIT ── */
-function initApp(){
-  importCartOrder();
-  ORDERS = loadOrders();
+async function initApp(){
+  ORDERS = await loadOrders();
   startClock();
   renderDashboard();
   renderOrders();
@@ -844,15 +870,37 @@ function buildOrderCard(order){
 }
 
 function toggleOrder(id){ const c=document.getElementById('oc-'+id); if(c) c.classList.toggle('expanded'); }
-function setStatus(id,status){
-  const order=ORDERS.find(o=>o.id===id); if(!order) return;
-  order.status=status;
-  saveOrders(ORDERS);
-  const existing=document.getElementById('oc-'+id);
-  if(existing){ const was=existing.classList.contains('expanded'); const nc=buildOrderCard(order); if(was) nc.classList.add('expanded'); existing.replaceWith(nc); }
-  updateSidebarBadge(); renderDashboard();
-  showToast('دۆخی داواکاری گۆڕدرا بۆ «'+STATUS_LABELS[status]+'»');
+async function setStatus(id, status) {
+  const order = ORDERS.find(o => o.id === id);
+  if (!order) return;
+
+  // update in Supabase using real db id
+  if (order._dbId) {
+    await fetch(`${SUPABASE_URL}/rest/v1/orders?id=eq.${order._dbId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ status })
+    });
+  }
+
+  order.status = status;
+  const existing = document.getElementById('oc-' + id);
+  if (existing) {
+    const was = existing.classList.contains('expanded');
+    const nc  = buildOrderCard(order);
+    if (was) nc.classList.add('expanded');
+    existing.replaceWith(nc);
+  }
+  updateSidebarBadge();
+  renderDashboard();
+  showToast('دۆخی داواکاری گۆڕدرا بۆ «' + STATUS_LABELS[status] + '»');
 }
+
 
 /* ══════════════════════════════════════════
    REPORTS
