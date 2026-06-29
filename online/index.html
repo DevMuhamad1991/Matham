@@ -1175,18 +1175,61 @@
 	  });
 	}
 
-	function submitOrder() {
-	  const name=document.getElementById('f-name').value.trim();
-	  const phone=document.getElementById('f-phone').value.trim();
-	  const address=document.getElementById('f-address').value.trim();
-	  [['f-name',name],['f-phone',phone],['f-address',address]].forEach(([id,val])=>{
-		document.getElementById(id).style.borderColor = val ? '' : 'var(--danger)';
-		if(val) document.getElementById(id).style.boxShadow='';
-	  });
-	  if(!name||!phone||!address) return;
-	  document.getElementById('checkout-form-view').classList.add('hidden');
-	  document.getElementById('checkout-success-view').classList.remove('hidden');
-	}
+	const SUPABASE_URL = 'https://ciecyvmumszwrvlwybkz.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_bI7a9JbEu8pJNuEwcVBz2Q_7ZlC9AYx';
+
+async function submitOrder() {
+  const name    = document.getElementById('f-name').value.trim();
+  const phone   = document.getElementById('f-phone').value.trim();
+  const address = document.getElementById('f-address').value.trim();
+
+  // validate
+  [['f-name',name],['f-phone',phone],['f-address',address]].forEach(([id,val])=>{
+    document.getElementById(id).style.borderColor = val ? '' : 'var(--danger)';
+    if(val) document.getElementById(id).style.boxShadow='';
+  });
+  if(!name||!phone||!address) return;
+
+  const note  = document.getElementById('f-note').value.trim();
+  const total = getTotal();
+
+  // build items array from cart
+  const items = cart.map(ci => {
+    const m = MENU_DATA.find(x => x.id === ci.id);
+    return { name: m.name.ku, qty: ci.qty, price: m.price };
+  });
+
+  // send to Supabase
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/orders`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({
+        customer_name: name,
+        customer_phone: phone,
+        customer_address: address,
+        note: note,
+        items: items,
+        total: total,
+        status: 'pending'
+      })
+    });
+
+    if (!res.ok) throw new Error('Supabase error');
+  } catch(e) {
+    console.error(e);
+    // هەڵەیەک هەبوو، بەڵام باز نادەین — داواکاری نیشان دەدەین
+  }
+
+  document.getElementById('checkout-form-view').classList.add('hidden');
+  document.getElementById('checkout-success-view').classList.remove('hidden');
+}
+
 
 	function resetAfterOrder() {
 	  cart=[]; saveCart(); updateCartBar(); renderCartDrawer();
