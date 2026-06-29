@@ -904,6 +904,11 @@
 		  <label class="form-label" data-i18n="formAddress">ناونیشان</label>
 		  <input type="text" id="f-address" class="form-input" data-i18n-placeholder="formAddressPH" />
 		</div>
+    <button type="button" onclick="shareLocation()">
+  <i class="ri-map-pin-line"></i>
+  <span>شێر کردنی لۆکەیشنەکەم</span>
+</button>
+
 		<div class="form-group">
 		  <label class="form-label">
 			<span data-i18n="formNote">تێبینی</span>
@@ -1228,6 +1233,17 @@ async function submitOrder() {
 
   document.getElementById('checkout-form-view').classList.add('hidden');
   document.getElementById('checkout-success-view').classList.remove('hidden');
+}
+
+function shareLocation() {
+  if(!navigator.geolocation) return;
+  
+  navigator.geolocation.getCurrentPosition(pos => {
+    const lat = pos.coords.latitude;
+    const lng = pos.coords.longitude;
+    const url = `https://www.google.com/maps?q=${lat},${lng}`;
+    document.getElementById('f-address').value = url;
+  });
 }
 
 
