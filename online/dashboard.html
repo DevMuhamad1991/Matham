@@ -718,6 +718,117 @@ async function initApp(){
   renderOrders();
   updateSidebarBadge();
   renderReports('daily');
+		startRealtime();
+}
+
+/* ── REALTIME ── */
+function startRealtime() {
+  const ws_url = SUPABASE_URL.replace('https://', 'wss://') + '/realtime/v1/websocket?apikey=' + SUPABASE_KEY + '&vsn=1.0.0';
+  
+  let ws;
+  let heartbeatTimer;
+  let reconnectTimer;
+
+  function connect() {
+    ws = new WebSocket(ws_url);
+
+    ws.onopen = () => {
+      console.log('Realtime connected');
+
+      // Join channel
+      ws.send(JSON.stringify({
+        topic: 'realtime:public:orders',
+        event: 'phx_join',
+        payload: {},
+        ref: '1'
+      }));
+
+      // Heartbeat هەر ٣٠ چرکە
+      heartbeatTimer = setInterval(() => {
+        ws.send(JSON.stringify({
+          topic: 'phoenix',
+          event: 'heartbeat',
+          payload: {},
+          ref: '2'
+        }));
+      }, 30000);
+    };
+
+    ws.onmessage = async (e) => {
+      const msg = JSON.parse(e.data);
+      
+      // داواکاری نوێ هات
+      if (msg.event === 'INSERT' && msg.topic === 'realtime:public:orders') {
+        const row = msg.payload.record;
+        const newOrder = {
+          id: '#' + String(row.id).padStart(4, '0'),
+          status: row.status,
+          time: new Date(row.created_at).toLocaleTimeString('ku', {hour:'2-digit', minute:'2-digit'}),
+          date: row.created_at.slice(0, 10),
+          customer: {
+            name:    row.customer_name,
+            phone:   row.customer_phone,
+            address: row.customer_address
+          },
+          note:  row.note || '',
+          items: row.items || [],
+          _dbId: row.id
+        };
+
+        // زیادکردن بۆ سەرەوەی لیستەکە
+        ORDERS.unshift(newOrder);
+        renderDashboard();
+        renderOrders();
+
+        // دەنگی ئاگادارکردنەوە
+        playNotifSound();
+        showToast('داواکاری نوێ هات! ' + newOrder.customer.name);
+      }
+
+      // دۆخی داواکاری گۆڕدرا
+      if (msg.event === 'UPDATE' && msg.topic === 'realtime:public:orders') {
+        const row = msg.payload.record;
+        const orderId = '#' + String(row.id).padStart(4, '0');
+        const existing = ORDERS.find(o => o.id === orderId);
+        if (existing) {
+          existing.status = row.status;
+          renderDashboard();
+          renderOrders();
+        }
+      }
+    };
+
+    ws.onclose = () => {
+      console.log('Realtime disconnected — reconnecting...');
+      clearInterval(heartbeatTimer);
+      // دووبارە بەستنەوە دوای ٣ چرکە
+      reconnectTimer = setTimeout(connect, 3000);
+    };
+
+    ws.onerror = (err) => {
+      console.error('Realtime error:', err);
+      ws.close();
+    };
+  }
+
+  connect();
+}
+
+/* ── دەنگی ئاگادارکردنەوە ── */
+function playNotifSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.frequency.setValueAtTime(880, ctx.currentTime);
+    osc.frequency.setValueAtTime(660, ctx.currentTime + 0.1);
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.4);
+  } catch(e) {}
 }
 
 /* ── CLOCK ── */
