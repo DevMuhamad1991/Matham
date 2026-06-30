@@ -321,7 +321,12 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
 	  <label>کەتەگۆری</label>
 	  <select id="foodCat"></select>
 	</div>
-	<div class="field"><label>وێنە (URL)</label><input type="text" id="foodImg" dir="ltr"/></div>
+<div class="field">
+  <label>وێنە</label>
+  <input type="file" id="foodImgFile" accept="image/*" style="margin-bottom:8px"/>
+  <input type="text" id="foodImg" dir="ltr" placeholder="یان URL بنووسە" />
+  <img id="foodImgPreview" style="max-width:100px;border-radius:8px;margin-top:8px;display:none"/>
+</div>
 	<div class="row3">
 	  <div class="field"><label>نرخ (دینار)</label><input type="number" id="foodPrice"/></div>
 	  <div class="field"><label>کالۆری</label><input type="number" id="foodCal"/></div>
@@ -357,7 +362,12 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
 	<h3><span id="catModalTitle">زیادکردنی کەتەگۆری</span><i class="fa-solid fa-xmark close" id="catModalClose"></i></h3>
 	<input type="hidden" id="catRowId"/>
 	<div class="field"><label>ناسنامەی کەتەگۆری (cat_id — تەنها بە ئینگلیزی، بێ بۆشایی، نموونە: burger)</label><input type="text" id="catCatId" dir="ltr"/></div>
-	<div class="field"><label>وێنەی بچووک (URL — ئەگەر بەتاڵ بێت ئایکۆن بەکاردێت)</label><input type="text" id="catImg" dir="ltr"/></div>
+<div class="field">
+  <label>وێنەی بچووک</label>
+  <input type="file" id="catImgFile" accept="image/*" style="margin-bottom:8px"/>
+  <input type="text" id="catImg" dir="ltr" placeholder="یان URL بنووسە"/>
+  <img id="catImgPreview" style="max-width:80px;border-radius:8px;margin-top:8px;display:none"/>
+</div>
 	<div class="field"><label>ئایکۆن Font Awesome (نموونە: fa-solid fa-fire)</label><input type="text" id="catIcon" dir="ltr"/></div>
 	<div class="lang-tabs">
 	  <button class="lang-tab on" data-clt="ckb">کوردی</button>
@@ -584,6 +594,16 @@ document.getElementById('saveFooter').addEventListener('click', async ()=>{
   await loadAll();
 });
 
+async function uploadImage(file){
+  if(!file) return null;
+  const ext = file.name.split('.').pop();
+  const path = `${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+  const {error} = await sb.storage.from('images').upload(path, file);
+  if(error){ toast('هەڵە لە بارکردنی وێنە: '+error.message, false); return null; }
+  const {data} = sb.storage.from('images').getPublicUrl(path);
+  return data.publicUrl;
+}
+
 /* ═══════════════════════════════════════════════════════════
    6. FOOD TAB
 ═══════════════════════════════════════════════════════════ */
@@ -755,6 +775,24 @@ async function deleteCat(id){
   toast('کەتەگۆری سڕایەوە ✓');
   await loadAll();
 }
+
+document.getElementById('foodImgFile').addEventListener('change', async e=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  if(!guardConnected()) return;
+  toast('بارکردنی وێنە...');
+  const url = await uploadImage(file);
+  if(url){ document.getElementById('foodImg').value = url; toast('وێنە بارکرا ✓'); }
+});
+
+document.getElementById('catImgFile').addEventListener('change', async e=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  if(!guardConnected()) return;
+  toast('بارکردنی وێنە...');
+  const url = await uploadImage(file);
+  if(url){ document.getElementById('catImg').value = url; toast('وێنە بارکرا ✓'); }
+});
 
 /* ═══════════════════════════════════════════════════════════
    8. BOOT
