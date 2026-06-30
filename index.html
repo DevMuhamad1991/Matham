@@ -242,6 +242,12 @@ const S = { lang:'ckb', cat:'all', view:'grid' };
 let CATS = [];
 let MEALS = [];
 let SETTINGS = null;
+let MEAL_CATS = [];
+
+function catsOfMeal(mealId){
+  return MEAL_CATS.filter(mc=>mc.meal_id===mealId).map(mc=>mc.cat_id);
+}
+
 
 const t = k => (I18N[S.lang] && I18N[S.lang][k]) || k;
 function locName(m){ return m['name_'+S.lang] || m.name_en || m.name_ckb || ''; }
@@ -251,7 +257,7 @@ function catLabel(catId){
   if(!c) return catId;
   return c['label_'+S.lang] || c.label_ckb;
 }
-const filtered = () => MEALS.filter(m => S.cat==='all' || m.cat_id===S.cat);
+const filtered = () => MEALS.filter(m => S.cat==='all' || catsOfMeal(m.id).includes(S.cat));
 
 /* ════════════════════════════════════════════════════════════════
    3. DATA LOADING
@@ -263,15 +269,17 @@ async function loadData(){
     return;
   }
   try{
-    const [{data:cats,error:e1}, {data:meals,error:e2}, {data:settings,error:e3}] = await Promise.all([
-      sb.from('categories').select('*').order('sort',{ascending:true}),
-      sb.from('meals').select('*').order('id',{ascending:true}),
-      sb.from('site_settings').select('*').eq('id',1).single()
-    ]);
-    if(e1||e2||e3) throw (e1||e2||e3);
-    CATS = cats || [];
-    MEALS = meals || [];
-    SETTINGS = settings || null;
+    const [{data:cats,error:e1}, {data:meals,error:e2}, {data:settings,error:e3}, {data:mealCats,error:e4}] = await Promise.all([
+  sb.from('categories').select('*').order('sort',{ascending:true}),
+  sb.from('meals').select('*').order('id',{ascending:true}),
+  sb.from('site_settings').select('*').eq('id',1).single(),
+  sb.from('meal_categories').select('*')
+]);
+if(e1||e2||e3||e4) throw (e1||e2||e3||e4);
+CATS = cats || [];
+MEALS = meals || [];
+SETTINGS = settings || null;
+MEAL_CATS = mealCats || [];
     applySettings();
     renderAll();
     boot.style.display='none';
@@ -302,8 +310,14 @@ function setupRealtime(){
       applySettings();
       renderAll();
     })
+    .on('postgres_changes', {event:'*', schema:'public', table:'meal_categories'}, async ()=>{
+      const {data} = await sb.from('meal_categories').select('*');
+      MEAL_CATS = data || [];
+      renderMenu();
+    })
     .subscribe();
 }
+
 
 
 function applySettings(){
@@ -364,7 +378,7 @@ function listCard(m, idx){ return `
   <article class="lcard" role="listitem" data-id="${m.id}" tabindex="0" aria-label="${locName(m)}">
     <div class="lc-img"><img src="${m.img||''}" alt="${locName(m)}" loading="${idx<4?'eager':'lazy'}"/></div>
     <div class="lc-body">
-      <div><div class="lc-cat">${catLabel(m.cat_id)}</div><div class="lc-name">${locName(m)}</div></div>
+<div class="lc-cat">${catsOfMeal(m.id).map(catLabel).join(' · ')}</div>
       <div class="lc-footer"><div><span class="lc-price">${(m.price||0).toLocaleString()}</span><span class="lc-price-cur">${t('currency')}</span></div></div>
     </div>
   </article>`; }
@@ -410,7 +424,7 @@ function openModal(id){
   if(!m) return;
   document.getElementById('mImg').src = m.img||'';
   document.getElementById('mImg').alt = locName(m);
-  document.getElementById('mCat').textContent = catLabel(m.cat_id);
+document.getElementById('mCat').textContent = catsOfMeal(m.id).map(catLabel).join(' · ');
   document.getElementById('mName').textContent = locName(m);
   document.getElementById('mPrice').textContent = (m.price||0).toLocaleString();
   document.getElementById('mCur').textContent = t('currency');
