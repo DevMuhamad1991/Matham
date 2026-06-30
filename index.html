@@ -275,11 +275,36 @@ async function loadData(){
     applySettings();
     renderAll();
     boot.style.display='none';
+        setupRealtime();
   }catch(err){
     console.error(err);
     boot.innerHTML = `<i class="fa-solid fa-triangle-exclamation" style="color:#E15555"></i><p style="max-width:280px;text-align:center">هەڵەیەک ڕوویدا لە بارکردنی داتا.<br/>${(err&&err.message)||''}</p>`;
   }
 }
+
+function setupRealtime(){
+  if(!sb) return;
+  sb.channel('public:all-changes')
+    .on('postgres_changes', {event:'*', schema:'public', table:'meals'}, async ()=>{
+      const {data} = await sb.from('meals').select('*').order('id',{ascending:true});
+      MEALS = data || [];
+      renderMenu();
+    })
+    .on('postgres_changes', {event:'*', schema:'public', table:'categories'}, async ()=>{
+      const {data} = await sb.from('categories').select('*').order('sort',{ascending:true});
+      CATS = data || [];
+      renderCats();
+      renderMenu();
+    })
+    .on('postgres_changes', {event:'*', schema:'public', table:'site_settings'}, async ()=>{
+      const {data} = await sb.from('site_settings').select('*').eq('id',1).single();
+      SETTINGS = data || null;
+      applySettings();
+      renderAll();
+    })
+    .subscribe();
+}
+
 
 function applySettings(){
   if(!SETTINGS) return;
