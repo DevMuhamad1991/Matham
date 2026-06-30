@@ -317,10 +317,10 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
   <div class="modal">
 	<h3><span id="foodModalTitle">زیادکردنی خواردن</span><i class="fa-solid fa-xmark close" id="foodModalClose"></i></h3>
 	<input type="hidden" id="foodId"/>
-	<div class="field">
-	  <label>کەتەگۆری</label>
-	  <select id="foodCat"></select>
-	</div>
+<div class="field">
+  <label>کەتەگۆری (یەک یان زیاتر هەڵبژێرە)</label>
+  <div id="foodCatChecks" style="display:flex;flex-wrap:wrap;gap:8px"></div>
+</div>
 <div class="field">
   <label>وێنە</label>
   <input type="file" id="foodImgFile" accept="image/*" style="margin-bottom:8px"/>
@@ -475,22 +475,30 @@ document.getElementById('connectBtn').addEventListener('click', ()=>{
   connectSupabase(url, key);
 });
 
+let MEAL_CATS = []; // [{meal_id, cat_id}, ...]
+
 async function loadAll(){
   if(!sb) return;
-  const [{data:cats}, {data:meals}, {data:settings}] = await Promise.all([
-	sb.from('categories').select('*').order('sort', {ascending:true}),
-	sb.from('meals').select('*').order('id', {ascending:true}),
-	sb.from('site_settings').select('*').eq('id',1).single()
+  const [{data:cats}, {data:meals}, {data:settings}, {data:mealCats}] = await Promise.all([
+    sb.from('categories').select('*').order('sort', {ascending:true}),
+    sb.from('meals').select('*').order('id', {ascending:true}),
+    sb.from('site_settings').select('*').eq('id',1).single(),
+    sb.from('meal_categories').select('*')
   ]);
   CATS = cats || [];
   MEALS = meals || [];
   SETTINGS = settings || null;
+  MEAL_CATS = mealCats || [];
   renderFoodList();
   renderCatList();
-  fillFoodCatSelect();
   if(SETTINGS) fillDesignForm();
   if(SETTINGS) fillFooterForm();
 }
+
+function catsOfMeal(mealId){
+  return MEAL_CATS.filter(mc=>mc.meal_id===mealId).map(mc=>mc.cat_id);
+}
+
 
 /* ═══════════════════════════════════════════════════════════
    3. TABS
@@ -607,10 +615,16 @@ async function uploadImage(file){
 /* ═══════════════════════════════════════════════════════════
    6. FOOD TAB
 ═══════════════════════════════════════════════════════════ */
-function fillFoodCatSelect(){
-  const sel = document.getElementById('foodCat');
-  sel.innerHTML = CATS.filter(c=>c.cat_id!=='all').map(c=>`<option value="${c.cat_id}">${c.label_ckb}</option>`).join('');
+function fillFoodCatSelect(selectedCats=[]){
+  const wrap = document.getElementById('foodCatChecks');
+  wrap.innerHTML = CATS.filter(c=>c.cat_id!=='all').map(c=>`
+    <label style="display:flex;align-items:center;gap:6px;background:var(--layer2);padding:7px 12px;border-radius:99px;font-size:12.5px;cursor:pointer">
+      <input type="checkbox" value="${c.cat_id}" ${selectedCats.includes(c.cat_id)?'checked':''}/>
+      ${c.label_ckb}
+    </label>
+  `).join('');
 }
+
 
 function renderFoodList(filterText=''){
   const list = document.getElementById('foodList');
@@ -623,7 +637,7 @@ function renderFoodList(filterText=''){
 	  <div class="li-img">${m.img?`<img src="${m.img}" loading="lazy"/>`:''}</div>
 	  <div class="li-body">
 		<div class="li-title">${m.name_ckb}</div>
-		<div class="li-sub">${m.cat_id} · ${(m.price||0).toLocaleString()} دینار</div>
+<div class="li-sub">${catsOfMeal(m.id).join(', ')} · ${(m.price||0).toLocaleString()} دینار</div>
 	  </div>
 	  <div class="li-actions">
 		<button class="icon-btn" data-edit-food="${m.id}"><i class="fa-solid fa-pen"></i></button>
@@ -647,7 +661,6 @@ function openFoodModal(id=null){
   const m = id ? MEALS.find(x=>x.id===id) : null;
   document.getElementById('foodModalTitle').textContent = m ? 'ئیدیتکردنی خواردن' : 'زیادکردنی خواردن';
   document.getElementById('foodId').value = m ? m.id : '';
-  document.getElementById('foodCat').value = m ? m.cat_id : CATS.filter(c=>c.cat_id!=='all')[0]?.cat_id || '';
   document.getElementById('foodImg').value = m ? (m.img||'') : '';
   document.getElementById('foodPrice').value = m ? m.price : '';
   document.getElementById('foodCal').value = m ? m.cal : '';
@@ -658,6 +671,7 @@ function openFoodModal(id=null){
   document.getElementById('foodDescCkb').value = m ? m.desc_ckb : '';
   document.getElementById('foodDescAr').value  = m ? m.desc_ar  : '';
   document.getElementById('foodDescEn').value  = m ? m.desc_en  : '';
+  fillFoodCatSelect(m ? catsOfMeal(m.id) : []);
   document.getElementById('foodOverlay').classList.add('open');
 }
 function closeFoodModal(){ document.getElementById('foodOverlay').classList.remove('open'); }
@@ -668,28 +682,46 @@ document.getElementById('foodCancel').addEventListener('click', closeFoodModal);
 document.getElementById('foodSave').addEventListener('click', async ()=>{
   if(!guardConnected()) return;
   const id = document.getElementById('foodId').value;
+  const checkedCats = Array.from(document.querySelectorAll('#foodCatChecks input:checked')).map(c=>c.value);
+  if(!checkedCats.length){ toast('بەلایەنی کەم یەک کەتەگۆری هەڵبژێرە', false); return; }
+
   const payload = {
-	cat_id: document.getElementById('foodCat').value,
-	img: document.getElementById('foodImg').value.trim(),
-	price: Number(document.getElementById('foodPrice').value)||0,
-	cal: Number(document.getElementById('foodCal').value)||0,
-	prep: Number(document.getElementById('foodPrep').value)||0,
-	name_ckb: document.getElementById('foodNameCkb').value.trim(),
-	name_ar:  document.getElementById('foodNameAr').value.trim(),
-	name_en:  document.getElementById('foodNameEn').value.trim(),
-	desc_ckb: document.getElementById('foodDescCkb').value.trim(),
-	desc_ar:  document.getElementById('foodDescAr').value.trim(),
-	desc_en:  document.getElementById('foodDescEn').value.trim(),
+    cat_id: checkedCats[0], // بۆ پاشەکەوتکردنی هاوسەنگی (legacy)
+    img: document.getElementById('foodImg').value.trim(),
+    price: Number(document.getElementById('foodPrice').value)||0,
+    cal: Number(document.getElementById('foodCal').value)||0,
+    prep: Number(document.getElementById('foodPrep').value)||0,
+    name_ckb: document.getElementById('foodNameCkb').value.trim(),
+    name_ar:  document.getElementById('foodNameAr').value.trim(),
+    name_en:  document.getElementById('foodNameEn').value.trim(),
+    desc_ckb: document.getElementById('foodDescCkb').value.trim(),
+    desc_ar:  document.getElementById('foodDescAr').value.trim(),
+    desc_en:  document.getElementById('foodDescEn').value.trim(),
   };
   if(!payload.name_ckb){ toast('ناوی خواردن بنووسە (بەلایەنی کەم کوردی)', false); return; }
+
+  let mealId = id ? Number(id) : null;
   let error;
-  if(id){ ({error} = await sb.from('meals').update(payload).eq('id', Number(id))); }
-  else  { ({error} = await sb.from('meals').insert(payload)); }
+  if(mealId){
+    ({error} = await sb.from('meals').update(payload).eq('id', mealId));
+  } else {
+    const {data, error:insErr} = await sb.from('meals').insert(payload).select('id').single();
+    error = insErr;
+    mealId = data?.id;
+  }
   if(error){ toast('هەڵە: '+error.message, false); return; }
+
+  // نوێکردنەوەی پەیوەندییەکانی کەتەگۆری
+  await sb.from('meal_categories').delete().eq('meal_id', mealId);
+  const rows = checkedCats.map(cat_id=>({meal_id:mealId, cat_id}));
+  const {error: mcErr} = await sb.from('meal_categories').insert(rows);
+  if(mcErr){ toast('هەڵە لە کەتەگۆری: '+mcErr.message, false); return; }
+
   toast(id ? 'خواردنەکە نوێکرایەوە ✓' : 'خواردن زیادکرا ✓');
   closeFoodModal();
   await loadAll();
 });
+
 
 async function deleteFood(id){
   if(!guardConnected()) return;
