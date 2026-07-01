@@ -163,6 +163,21 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
 .lang-pane.on{display:block}
 
 .hint{font-size:11.5px;color:var(--faint);margin-top:4px}
+
+.upload-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--layer2);border:1px dashed rgba(212,175,55,.35);
+  color:var(--gold);border-radius:var(--r-md);padding:10px 16px;
+  font-size:13px;cursor:pointer;width:100%;justify-content:center;
+  transition:.2s;
+}
+.upload-btn:hover{background:var(--layer3);border-color:var(--gold)}
+.upload-done{
+  display:flex;align-items:center;gap:8px;
+  background:rgba(76,175,109,.1);border:1px solid rgba(76,175,109,.3);
+  color:var(--ok);border-radius:var(--r-md);padding:10px 16px;font-size:13px;
+}
+
 </style>
 </head>
 <body>
@@ -322,11 +337,17 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
   <div id="foodCatChecks" style="display:flex;flex-wrap:wrap;gap:8px"></div>
 </div>
 <div class="field">
-  <label>وێنە</label>
-  <input type="file" id="foodImgFile" accept="image/*" style="margin-bottom:8px"/>
-  <input type="text" id="foodImg" dir="ltr" placeholder="یان URL بنووسە" />
-  <img id="foodImgPreview" style="max-width:100px;border-radius:8px;margin-top:8px;display:none"/>
+<div class="field"><label>وێنە</label>
+  <input type="file" id="foodImgFile" accept="image/*" style="display:none"/>
+  <input type="hidden" id="foodImg"/>
+  <div id="foodImgStatus">
+    <label for="foodImgFile" class="upload-btn">
+      <i class="fa-solid fa-cloud-arrow-up"></i> هەڵبژاردنی وێنە
+    </label>
+  </div>
+  <img id="foodImgPreview" style="max-width:100%;border-radius:var(--r-md);margin-top:8px;display:none;max-height:120px;object-fit:cover"/>
 </div>
+
 	<div class="row3">
 	  <div class="field"><label>نرخ (دینار)</label><input type="number" id="foodPrice"/></div>
 	  <div class="field"><label>کالۆری</label><input type="number" id="foodCal"/></div>
@@ -362,12 +383,17 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
 	<h3><span id="catModalTitle">زیادکردنی کەتەگۆری</span><i class="fa-solid fa-xmark close" id="catModalClose"></i></h3>
 	<input type="hidden" id="catRowId"/>
 	<div class="field"><label>ناسنامەی کەتەگۆری (cat_id — تەنها بە ئینگلیزی، بێ بۆشایی، نموونە: burger)</label><input type="text" id="catCatId" dir="ltr"/></div>
-<div class="field">
-  <label>وێنەی بچووک</label>
-  <input type="file" id="catImgFile" accept="image/*" style="margin-bottom:8px"/>
-  <input type="text" id="catImg" dir="ltr" placeholder="یان URL بنووسە"/>
-  <img id="catImgPreview" style="max-width:80px;border-radius:8px;margin-top:8px;display:none"/>
+<div class="field"><label>وێنەی بچووک</label>
+  <input type="file" id="catImgFile" accept="image/*" style="display:none"/>
+  <input type="hidden" id="catImg"/>
+  <div id="catImgStatus">
+    <label for="catImgFile" class="upload-btn">
+      <i class="fa-solid fa-cloud-arrow-up"></i> هەڵبژاردنی وێنە
+    </label>
+  </div>
+  <img id="catImgPreview" style="max-width:80px;border-radius:50%;margin-top:8px;display:none"/>
 </div>
+
 	<div class="field"><label>ئایکۆن Font Awesome (نموونە: fa-solid fa-fire)</label><input type="text" id="catIcon" dir="ltr"/></div>
 	<div class="lang-tabs">
 	  <button class="lang-tab on" data-clt="ckb">کوردی</button>
@@ -615,6 +641,47 @@ async function uploadImage(file){
 /* ═══════════════════════════════════════════════════════════
    6. FOOD TAB
 ═══════════════════════════════════════════════════════════ */
+async function checkConnection(){
+  const dot = document.getElementById('connStatusDot');
+  const txt = document.getElementById('connStatusText');
+  try{
+    const {error} = await sb.from('site_settings').select('id').limit(1);
+    if(error) throw error;
+    dot.className='status-dot ok';
+    txt.textContent='پەیوەندی سەرکەوتوو';
+    loadStorageInfo();
+  }catch(e){
+    dot.className='status-dot bad';
+    txt.textContent='پەیوەندی نەکرا';
+  }
+}
+
+async function loadStorageInfo(){
+  try{
+    const {data} = await sb.rpc('get_db_size');
+    const bytes = data || 0;
+    const mb = bytes / (1024*1024);
+    const pct = Math.min((mb/500)*100, 100).toFixed(1);
+    document.getElementById('storageBar').style.width = pct+'%';
+    document.getElementById('storageBar').style.background = mb>400 ? 'var(--danger)' : mb>300 ? '#E1A855' : 'var(--gold)';
+    document.getElementById('storageText').textContent = `${mb.toFixed(2)} MB / 500 MB (${pct}%)`;
+  }catch(e){
+    document.getElementById('storageText').textContent = 'زانیاری بەردەست نییە';
+  }
+}
+
+document.getElementById('deleteAllBtn').addEventListener('click', async ()=>{
+  if(!guardConnected()) return;
+  if(!confirm('دڵنیایت؟ هەموو خواردن و کەتەگۆرییەکان دەسرێتەوە!')) return;
+  if(!confirm('دووبارە دڵنیابوونەوە — ئەم کردارە گەڕاندنەوەی نییە!')) return;
+  await sb.from('meal_categories').delete().neq('meal_id',0);
+  await sb.from('meals').delete().neq('id',0);
+  await sb.from('categories').delete().neq('id',0);
+  toast('هەموو داتا سڕایەوە ✓');
+  await loadAll();
+  loadStorageInfo();
+});
+
 function fillFoodCatSelect(selectedCats=[]){
   const wrap = document.getElementById('foodCatChecks');
   wrap.innerHTML = CATS.filter(c=>c.cat_id!=='all').map(c=>`
@@ -832,8 +899,11 @@ document.getElementById('catImgFile').addEventListener('change', async e=>{
 function boot(){
   document.getElementById('sbUrl').value = SUPABASE_URL;
   document.getElementById('sbKey').value = SUPABASE_ANON_KEY;
-  connectSupabase(SUPABASE_URL, SUPABASE_ANON_KEY);
+  connectSupabase(SUPABASE_URL, SUPABASE_ANON_KEY).then(()=>{
+    checkConnection();
+  });
 }
+
 
 if(sessionStorage.getItem('arash_dash_unlocked')==='1') boot();
 </script>
