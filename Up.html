@@ -484,7 +484,6 @@ async function connectSupabase(url, key){
 	return true;
   }catch(err){
 	setStatus(false, 'هەڵە لە پەیوەندی');
-	قcolor = 'var(--danger)';
 	sb = null;
 	return false;
   }
@@ -848,15 +847,12 @@ document.getElementById('catCancel').addEventListener('click', closeCatModal);
 document.getElementById('catSave').addEventListener('click', async ()=>{
   if(!guardConnected()) return;
   const rowId = document.getElementById('catRowId').value;
+  const existingCat = rowId ? CATS.find(x=>x.id===Number(rowId)) : null;
+  const autoId = existingCat ? existingCat.cat_id : 'cat_' + Date.now();
   const payload = {
-const rowId = document.getElementById('catRowId').value;
-const existingCat = rowId ? CATS.find(x=>x.id===Number(rowId)) : null;
-const labelCkb = document.getElementById('catLabelCkb').value.trim();
-const autoId = existingCat 
-  ? existingCat.cat_id 
-  : 'cat_' + Date.now();
-const payload = {
-  cat_id: autoId,
+    cat_id: autoId,
+    
+
 
 	img: document.getElementById('catImg').value.trim(),
 	icon: document.getElementById('catIcon').value.trim(),
