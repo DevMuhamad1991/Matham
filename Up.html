@@ -201,7 +201,9 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
 		<span class="status-dot" id="statusDot"></span>
 		<span id="statusText">پەیوەندی نەکراوە</span>
 	  </div>
-	  <button class="lock-btn" id="lockBtn" title="داخستن"><i class="fa-solid fa-right-from-bracket"></i></button>
+<button class="lock-btn" id="lockBtn" title="داخستن" style="display:flex;align-items:center;gap:6px;background:rgba(225,85,85,.12);border:1px solid rgba(225,85,85,.25);color:var(--danger);padding:7px 14px;border-radius:99px;font-size:12.5px;font-weight:600;transition:.2s">
+  <i class="fa-solid fa-right-from-bracket"></i> دەرچوون
+</button>
 	</div>
   </div>
 
@@ -211,6 +213,7 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
 	<button class="tab" data-tab="food"><i class="fa-solid fa-bowl-food"></i> خواردن</button>
 	<button class="tab" data-tab="cat"><i class="fa-solid fa-layer-group"></i> کەتەگۆری</button>
 	<button class="tab" data-tab="footer"><i class="fa-solid fa-shoe-prints"></i> فوتەر</button>
+  <button class="tab" data-tab="security"><i class="fa-solid fa-shield-halved"></i> پاراستن</button>
   </div>
 
   <main>
@@ -325,6 +328,26 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
 	  <button class="btn btn-gold" id="saveFooter"><i class="fa-solid fa-floppy-disk"></i> پاشەکەوتکردنی فوتەر</button>
 	</section>
 
+  <!-- ===== SECURITY ===== -->
+<section class="panel" id="panel-security">
+  <div class="card">
+    <h2><i class="fa-solid fa-lock"></i> گۆڕینی پین کۆدی داخستنەوە (ئێستا: 1991)</h2>
+    <div class="row2">
+      <div class="field"><label>پین کۆدی نوێ</label><input type="password" id="newPin" inputmode="numeric" maxlength="6" placeholder="ژمارە بنووسە"/></div>
+      <div class="field"><label>دووبارە بنووسە</label><input type="password" id="newPinConfirm" inputmode="numeric" maxlength="6" placeholder="دووبارە بنووسە"/></div>
+    </div>
+    <button class="btn btn-gold" id="savePinBtn"><i class="fa-solid fa-floppy-disk"></i> پاشەکەوتکردنی پین</button>
+  </div>
+  <div class="card">
+    <h2><i class="fa-solid fa-shield-halved"></i> گۆڕینی پین کۆدی سڕینەوەی داتا (ئێستا: 1881)</h2>
+    <div class="row2">
+      <div class="field"><label>پین کۆدی نوێ</label><input type="password" id="newAdminPin" inputmode="numeric" maxlength="6" placeholder="ژمارە بنووسە"/></div>
+      <div class="field"><label>دووبارە بنووسە</label><input type="password" id="newAdminPinConfirm" inputmode="numeric" maxlength="6" placeholder="دووبارە بنووسە"/></div>
+    </div>
+    <button class="btn btn-gold" id="saveAdminPinBtn"><i class="fa-solid fa-floppy-disk"></i> پاشەکەوتکردنی پین</button>
+  </div>
+</section>
+
   </main>
 </div>
 
@@ -415,12 +438,16 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
 /* ═══════════════════════════════════════════════════════════
    0. PIN GATE
 ═══════════════════════════════════════════════════════════ */
-const PIN = '1991';
+let CURRENT_PIN = localStorage.getItem('arash_pin') || '1991';
+let ADMIN_DELETE_PIN = localStorage.getItem('arash_admin_pin') || '1881';
+
+
+const PIN = CURRENT_PIN;
 const pinInput = document.getElementById('pinInput');
 const pinErr   = document.getElementById('pinErr');
 
 function tryPin(){
-  if(pinInput.value === PIN){
+if(pinInput.value === (localStorage.getItem('arash_pin') || '1991')){
 	document.getElementById('pinGate').style.display='none';
 	document.getElementById('app').style.display='block';
 	sessionStorage.setItem('arash_dash_unlocked','1');
@@ -658,8 +685,11 @@ async function loadStorageInfo(){
 
 document.getElementById('deleteAllBtn').addEventListener('click', async ()=>{
   if(!guardConnected()) return;
+  const entered = prompt('تکایە پین کۆدی تایبەتی سڕینەوە بنووسە:');
+  if(entered !== (localStorage.getItem('arash_admin_pin') || '1881')){
+    toast('پین کۆدی هەڵە', false); return;
+  }
   if(!confirm('دڵنیایت؟ هەموو خواردن و کەتەگۆرییەکان دەسرێتەوە!')) return;
-  if(!confirm('دووبارە دڵنیابوونەوە — ئەم کردارە گەڕاندنەوەی نییە!')) return;
   await sb.from('meal_categories').delete().neq('meal_id',0);
   await sb.from('meals').delete().neq('id',0);
   await sb.from('categories').delete().neq('id',0);
@@ -919,6 +949,29 @@ function boot(){
 }
 
 if(sessionStorage.getItem('arash_dash_unlocked')==='1') boot();
+
+document.getElementById('savePinBtn').addEventListener('click', ()=>{
+  const np = document.getElementById('newPin').value;
+  const nc = document.getElementById('newPinConfirm').value;
+  if(!np || np.length < 4){ toast('بەلایەنی کەم ٤ ژمارە بنووسە', false); return; }
+  if(np !== nc){ toast('پین کۆدەکان یەک نین', false); return; }
+  localStorage.setItem('arash_pin', np);
+  document.getElementById('newPin').value = '';
+  document.getElementById('newPinConfirm').value = '';
+  toast('پین کۆدی داخستنەوە گۆڕدرا ✓');
+});
+
+document.getElementById('saveAdminPinBtn').addEventListener('click', ()=>{
+  const np = document.getElementById('newAdminPin').value;
+  const nc = document.getElementById('newAdminPinConfirm').value;
+  if(!np || np.length < 4){ toast('بەلایەنی کەم ٤ ژمارە بنووسە', false); return; }
+  if(np !== nc){ toast('پین کۆدەکان یەک نین', false); return; }
+  localStorage.setItem('arash_admin_pin', np);
+  document.getElementById('newAdminPin').value = '';
+  document.getElementById('newAdminPinConfirm').value = '';
+  toast('پین کۆدی سڕینەوە گۆڕدرا ✓');
+});
+
 </script>
 </body>
 </html>
