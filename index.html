@@ -283,6 +283,12 @@ MEAL_CATS = mealCats || [];
     applySettings();
     renderAll();
     boot.style.display='none';
+    // زیادکردنی ژمارەی سەردان — تەنها یەک جار بۆ هەر سێشن
+if(!sessionStorage.getItem('arash_viewed')){
+  sessionStorage.setItem('arash_viewed','1');
+  sb.from('site_settings').update({view_count: (SETTINGS.view_count||0)+1}).eq('id',1).then(()=>{});
+}
+
         setupRealtime();
   }catch(err){
     console.error(err);
