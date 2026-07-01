@@ -386,10 +386,13 @@ function gridCard(m, idx){ return `
 function listCard(m, idx){ return `
   <article class="lcard" role="listitem" data-id="${m.id}" tabindex="0" aria-label="${locName(m)}">
     <div class="lc-img"><img src="${m.img||''}" alt="${locName(m)}" loading="${idx<4?'eager':'lazy'}"/></div>
-    <div class="lc-body">
-<div class="lc-cat">${catsOfMeal(m.id).map(catLabel).join(' · ')}</div>
-      <div class="lc-footer"><div><span class="lc-price">${(m.price||0).toLocaleString()}</span><span class="lc-price-cur">${t('currency')}</span></div></div>
-    </div>
+<div class="lc-body">
+  <div>
+    <div class="lc-cat">${catsOfMeal(m.id).map(catLabel).join(' · ')}</div>
+    <div class="lc-name">${locName(m)}</div>
+  </div>
+  <div class="lc-footer"><div><span class="lc-price">${(m.price||0).toLocaleString()}</span><span class="lc-price-cur">${t('currency')}</span></div></div>
+</div>
   </article>`; }
 
 /* ════════════════════════════════════════════════════════════════
