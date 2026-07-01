@@ -237,6 +237,14 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
     <p class="hint" style="margin-bottom:14px;color:var(--danger)">ئەم کردارە هەموو خواردن و کەتەگۆرییەکان دەسرێتەوە. ئەم کردارە گەڕاندنەوەی نییە.</p>
     <button class="btn btn-danger" id="deleteAllBtn"><i class="fa-solid fa-triangle-exclamation"></i> سڕینەوەی هەموو داتا</button>
   </div>
+  <div class="card">
+  <h2><i class="fa-solid fa-eye"></i> سەردانی مێنوو</h2>
+  <div style="display:flex;align-items:center;gap:12px">
+    <div style="font-size:36px;font-weight:700;color:var(--gold)" id="viewCountEl">---</div>
+    <div style="font-size:13px;color:var(--faint)">کەس سەیری مێنووی کردووە</div>
+  </div>
+</div>
+
 </section>
 
 
@@ -533,6 +541,8 @@ async function loadAll(){
   MEALS = meals || [];
   SETTINGS = settings || null;
   MEAL_CATS = mealCats || [];
+  const el = document.getElementById('viewCountEl');
+  if(el) el.textContent = (SETTINGS?.view_count || 0).toLocaleString();
   renderFoodList();
   renderCatList();
   if(SETTINGS) fillDesignForm();
