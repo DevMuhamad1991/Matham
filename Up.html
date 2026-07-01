@@ -475,25 +475,15 @@ async function connectSupabase(url, key){
 	localStorage.setItem('arash_sb_url', url);
 	localStorage.setItem('arash_sb_key', key);
 	setStatus(true, 'پەیوەندی کرا');
-	document.getElementById('connMsg').textContent = '✓ پەیوەندی سەرکەوتوو بوو';
-	document.getElementById('connMsg').style.color = 'var(--ok)';
 	await loadAll();
 	return true;
   }catch(err){
 	setStatus(false, 'هەڵە لە پەیوەندی');
-	document.getElementById('connMsg').textContent = '✗ ' + (err.message || 'هەڵەیەک ڕوویدا. URL و Key بپشکنە و دڵنیابە سکیمای SQL جێبەجێکراوە.');
-	document.getElementById('connMsg').style.color = 'var(--danger)';
+	قcolor = 'var(--danger)';
 	sb = null;
 	return false;
   }
 }
-
-document.getElementById('connectBtn').addEventListener('click', ()=>{
-  const url = document.getElementById('sbUrl').value.trim();
-  const key = document.getElementById('sbKey').value.trim();
-  if(!url || !key){ toast('تکایە URL و Key پڕبکەرەوە', false); return; }
-  connectSupabase(url, key);
-});
 
 let MEAL_CATS = []; // [{meal_id, cat_id}, ...]
 
@@ -904,13 +894,10 @@ document.getElementById('catImgFile').addEventListener('change', async e=>{
    8. BOOT
 ═══════════════════════════════════════════════════════════ */
 function boot(){
-  document.getElementById('sbUrl').value = SUPABASE_URL;
-  document.getElementById('sbKey').value = SUPABASE_ANON_KEY;
   connectSupabase(SUPABASE_URL, SUPABASE_ANON_KEY).then(()=>{
     checkConnection();
   });
 }
-
 
 if(sessionStorage.getItem('arash_dash_unlocked')==='1') boot();
 </script>
