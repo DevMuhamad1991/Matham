@@ -376,7 +376,6 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
   <div class="modal">
 	<h3><span id="catModalTitle">زیادکردنی کەتەگۆری</span><i class="fa-solid fa-xmark close" id="catModalClose"></i></h3>
 	<input type="hidden" id="catRowId"/>
-	<div class="field"><label>ناسنامەی کەتەگۆری (cat_id — تەنها بە ئینگلیزی، بێ بۆشایی، نموونە: burger)</label><input type="text" id="catCatId" dir="ltr"/></div>
 <div class="field"><label>وێنەی بچووک</label>
   <input type="file" id="catImgFile" accept="image/*" style="display:none"/>
   <input type="hidden" id="catImg"/>
@@ -713,6 +712,19 @@ function openFoodModal(id=null){
   document.getElementById('foodModalTitle').textContent = m ? 'ئیدیتکردنی خواردن' : 'زیادکردنی خواردن';
   document.getElementById('foodId').value = m ? m.id : '';
   document.getElementById('foodImg').value = m ? (m.img||'') : '';
+  // ریسێتی وێنە
+  document.getElementById('foodImgFile').value = '';
+  const prev = document.getElementById('foodImgPreview');
+  if(m?.img){
+    prev.src = m.img;
+    prev.style.display = 'block';
+    document.getElementById('foodImgStatus').innerHTML = `<div class="upload-done"><i class="fa-solid fa-check"></i> وێنەی پێشوو <label for="foodImgFile" style="margin-inline-start:auto;color:var(--muted);cursor:pointer;font-size:12px">گۆڕین</label></div>`;
+  } else {
+    prev.src = '';
+    prev.style.display = 'none';
+    document.getElementById('foodImgStatus').innerHTML = `<label for="foodImgFile" class="upload-btn"><i class="fa-solid fa-cloud-arrow-up"></i> هەڵبژاردنی وێنە</label>`;
+  }
+
   document.getElementById('foodPrice').value = m ? m.price : '';
   document.getElementById('foodCal').value = m ? m.cal : '';
   document.getElementById('foodPrep').value = m ? m.prep : '';
@@ -815,7 +827,6 @@ function openCatModal(id=null){
   const c = id ? CATS.find(x=>x.id===id) : null;
   document.getElementById('catModalTitle').textContent = c ? 'ئیدیتکردنی کەتەگۆری' : 'زیادکردنی کەتەگۆری';
   document.getElementById('catRowId').value = c ? c.id : '';
-  document.getElementById('catCatId').value = c ? c.cat_id : '';
   document.getElementById('catImg').value = c ? (c.img||'') : '';
   document.getElementById('catIcon').value = c ? (c.icon||'') : '';
   document.getElementById('catLabelCkb').value = c ? c.label_ckb : '';
@@ -832,7 +843,15 @@ document.getElementById('catSave').addEventListener('click', async ()=>{
   if(!guardConnected()) return;
   const rowId = document.getElementById('catRowId').value;
   const payload = {
-	cat_id: document.getElementById('catCatId').value.trim().toLowerCase().replace(/\s+/g,'_'),
+const rowId = document.getElementById('catRowId').value;
+const existingCat = rowId ? CATS.find(x=>x.id===Number(rowId)) : null;
+const labelCkb = document.getElementById('catLabelCkb').value.trim();
+const autoId = existingCat 
+  ? existingCat.cat_id 
+  : 'cat_' + Date.now();
+const payload = {
+  cat_id: autoId,
+
 	img: document.getElementById('catImg').value.trim(),
 	icon: document.getElementById('catIcon').value.trim(),
 	label_ckb: document.getElementById('catLabelCkb').value.trim(),
