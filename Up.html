@@ -215,32 +215,27 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
 
   <main>
 
-	<!-- ===== CONNECTION ===== -->
-	<section class="panel on" id="panel-conn">
-	  <div class="card conn-card">
-		<h2><i class="fa-solid fa-database"></i> پەیوەندی Supabase</h2>
-		<p class="hint" style="margin-bottom:14px">URL و Anon Key لە Supabase Project Settings → API بدۆزەرەوە. ئەم زانیارییانە تەنها لەسەر ئەم وێبگەڕە هەڵدەگیرێن (localStorage).</p>
-		<div class="field">
-		  <label>Supabase Project URL</label>
-		  <input type="text" id="sbUrl" placeholder="https://xxxxx.supabase.co"/>
-		</div>
-		<div class="field">
-		  <label>Supabase Anon Public Key</label>
-		  <input type="text" id="sbKey" placeholder="eyJhbGciOi..."/>
-		</div>
-		<button class="btn btn-gold" id="connectBtn"><i class="fa-solid fa-link"></i> پەیوەندی کردن</button>
-		<p class="hint" id="connMsg" style="margin-top:10px"></p>
-	  </div>
-	  <div class="card">
-		<h2><i class="fa-solid fa-circle-info"></i> ڕێنمایی سازکردن</h2>
-		<p class="hint" style="line-height:2">
-		  1. لە Supabase پڕۆژەیەکی نوێ دروست بکە (بەخۆڕایی).<br/>
-		  2. بچۆ SQL Editor و فایلی <b>supabase_schema.sql</b>ـی پێشکەشکراو جێبەجێ بکە.<br/>
-		  3. URL و Anon Key لە Settings → API کۆپی بکە و لێرە دایبنێ.<br/>
-		  4. دوای پەیوەندیکردن، خواردن و کەتەگۆرییەکانی سەرەتایی فایلی مێنووەکەت بە دەستی زیاد بکە یان داوام لێ بکە دانەیەکی import script بۆت دروست بکەم.
-		</p>
-	  </div>
-	</section>
+<!-- ===== CONNECTION ===== -->
+<section class="panel on" id="panel-conn">
+  <div class="card">
+    <h2><i class="fa-solid fa-database"></i> دۆخی داتابەیس</h2>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+      <span class="status-dot" id="connStatusDot"></span>
+      <span id="connStatusText" style="font-size:14px;color:var(--cream)">پشکنین...</span>
+    </div>
+    <div style="margin-bottom:8px;font-size:13px;color:var(--muted)">بەکارهێنانی داتابەیس</div>
+    <div style="background:var(--layer2);border-radius:99px;height:10px;overflow:hidden;margin-bottom:6px">
+      <div id="storageBar" style="height:100%;background:var(--gold);border-radius:99px;width:0%;transition:.6s"></div>
+    </div>
+    <div id="storageText" style="font-size:12px;color:var(--faint);text-align:left">---</div>
+  </div>
+  <div class="card">
+    <h2><i class="fa-solid fa-trash"></i> سڕینەوەی هەموو داتا</h2>
+    <p class="hint" style="margin-bottom:14px;color:var(--danger)">ئەم کردارە هەموو خواردن و کەتەگۆرییەکان دەسرێتەوە. ئەم کردارە گەڕاندنەوەی نییە.</p>
+    <button class="btn btn-danger" id="deleteAllBtn"><i class="fa-solid fa-triangle-exclamation"></i> سڕینەوەی هەموو داتا</button>
+  </div>
+</section>
+
 
 	<!-- ===== DESIGN ===== -->
 	<section class="panel" id="panel-design">
@@ -876,21 +871,34 @@ async function deleteCat(id){
 
 document.getElementById('foodImgFile').addEventListener('change', async e=>{
   const file = e.target.files[0];
-  if(!file) return;
-  if(!guardConnected()) return;
-  toast('بارکردنی وێنە...');
+  if(!file || !guardConnected()) return;
+  document.getElementById('foodImgStatus').innerHTML = `<div class="upload-btn"><i class="fa-solid fa-spinner fa-spin"></i> بارکردن...</div>`;
   const url = await uploadImage(file);
-  if(url){ document.getElementById('foodImg').value = url; toast('وێنە بارکرا ✓'); }
+  if(url){
+    document.getElementById('foodImg').value = url;
+    document.getElementById('foodImgStatus').innerHTML = `<div class="upload-done"><i class="fa-solid fa-check"></i> ${file.name} <label for="foodImgFile" style="margin-inline-start:auto;color:var(--muted);cursor:pointer;font-size:12px">گۆڕین</label></div>`;
+    const prev = document.getElementById('foodImgPreview');
+    prev.src = url; prev.style.display='block';
+  } else {
+    document.getElementById('foodImgStatus').innerHTML = `<label for="foodImgFile" class="upload-btn"><i class="fa-solid fa-cloud-arrow-up"></i> هەڵبژاردنی وێنە</label>`;
+  }
 });
 
 document.getElementById('catImgFile').addEventListener('change', async e=>{
   const file = e.target.files[0];
-  if(!file) return;
-  if(!guardConnected()) return;
-  toast('بارکردنی وێنە...');
+  if(!file || !guardConnected()) return;
+  document.getElementById('catImgStatus').innerHTML = `<div class="upload-btn"><i class="fa-solid fa-spinner fa-spin"></i> بارکردن...</div>`;
   const url = await uploadImage(file);
-  if(url){ document.getElementById('catImg').value = url; toast('وێنە بارکرا ✓'); }
+  if(url){
+    document.getElementById('catImg').value = url;
+    document.getElementById('catImgStatus').innerHTML = `<div class="upload-done"><i class="fa-solid fa-check"></i> ${file.name} <label for="catImgFile" style="margin-inline-start:auto;color:var(--muted);cursor:pointer;font-size:12px">گۆڕین</label></div>`;
+    const prev = document.getElementById('catImgPreview');
+    prev.src = url; prev.style.display='block';
+  } else {
+    document.getElementById('catImgStatus').innerHTML = `<label for="catImgFile" class="upload-btn"><i class="fa-solid fa-cloud-arrow-up"></i> هەڵبژاردنی وێنە</label>`;
+  }
 });
+
 
 /* ═══════════════════════════════════════════════════════════
    8. BOOT
