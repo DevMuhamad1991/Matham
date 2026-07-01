@@ -592,8 +592,6 @@ function fillFooterForm(){
   document.getElementById('fB1Phone').value  = SETTINGS.branch1_phone || '';
   document.getElementById('fB2Text').value   = SETTINGS.branch2_text || '';
   document.getElementById('fB2Phone').value  = SETTINGS.branch2_phone || '';
-  document.getElementById('fMadeBy').value   = SETTINGS.made_by_label || '';
-  document.getElementById('fWaLink').value   = SETTINGS.whatsapp_link || '';
 }
 
 document.getElementById('saveFooter').addEventListener('click', async ()=>{
@@ -607,8 +605,8 @@ document.getElementById('saveFooter').addEventListener('click', async ()=>{
 	branch1_phone: document.getElementById('fB1Phone').value,
 	branch2_text:  document.getElementById('fB2Text').value,
 	branch2_phone: document.getElementById('fB2Phone').value,
-	made_by_label: document.getElementById('fMadeBy').value,
-	whatsapp_link: document.getElementById('fWaLink').value,
+	made_by_label: 'DevMuhamad.com',
+whatsapp_link: 'https://wa.me/9647509628683',
   };
   const {error} = await sb.from('site_settings').upsert(payload);
   if(error){ toast('هەڵە: '+error.message, false); return; }
