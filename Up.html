@@ -328,25 +328,28 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
 	  <button class="btn btn-gold" id="saveFooter"><i class="fa-solid fa-floppy-disk"></i> پاشەکەوتکردنی فوتەر</button>
 	</section>
 
-  <!-- ===== SECURITY ===== -->
+<!-- ===== SECURITY ===== -->
 <section class="panel" id="panel-security">
   <div class="card">
-    <h2><i class="fa-solid fa-lock"></i> گۆڕینی پین کۆدی داخستنەوە (ئێستا: 1991)</h2>
+    <h2><i class="fa-solid fa-lock"></i> گۆڕینی پین کۆدی داخستنەوە</h2>
+    <div class="field"><label>پین کۆدی ئێستا</label><input type="password" id="currentPin" inputmode="numeric" maxlength="6" placeholder="پین کۆدی ئێستا بنووسە"/></div>
     <div class="row2">
-      <div class="field"><label>پین کۆدی نوێ</label><input type="password" id="newPin" inputmode="numeric" maxlength="6" placeholder="ژمارە بنووسە"/></div>
+      <div class="field"><label>پین کۆدی نوێ</label><input type="password" id="newPin" inputmode="numeric" maxlength="6" placeholder="پین کۆدی نوێ"/></div>
       <div class="field"><label>دووبارە بنووسە</label><input type="password" id="newPinConfirm" inputmode="numeric" maxlength="6" placeholder="دووبارە بنووسە"/></div>
     </div>
     <button class="btn btn-gold" id="savePinBtn"><i class="fa-solid fa-floppy-disk"></i> پاشەکەوتکردنی پین</button>
   </div>
   <div class="card">
-    <h2><i class="fa-solid fa-shield-halved"></i> گۆڕینی پین کۆدی سڕینەوەی داتا (ئێستا: 1881)</h2>
+    <h2><i class="fa-solid fa-shield-halved"></i> گۆڕینی پین کۆدی سڕینەوەی داتا</h2>
+    <div class="field"><label>پین کۆدی ئێستا</label><input type="password" id="currentAdminPin" inputmode="numeric" maxlength="6" placeholder="پین کۆدی ئێستا بنووسە"/></div>
     <div class="row2">
-      <div class="field"><label>پین کۆدی نوێ</label><input type="password" id="newAdminPin" inputmode="numeric" maxlength="6" placeholder="ژمارە بنووسە"/></div>
+      <div class="field"><label>پین کۆدی نوێ</label><input type="password" id="newAdminPin" inputmode="numeric" maxlength="6" placeholder="پین کۆدی نوێ"/></div>
       <div class="field"><label>دووبارە بنووسە</label><input type="password" id="newAdminPinConfirm" inputmode="numeric" maxlength="6" placeholder="دووبارە بنووسە"/></div>
     </div>
     <button class="btn btn-gold" id="saveAdminPinBtn"><i class="fa-solid fa-floppy-disk"></i> پاشەکەوتکردنی پین</button>
   </div>
 </section>
+
 
   </main>
 </div>
@@ -951,26 +954,37 @@ function boot(){
 if(sessionStorage.getItem('arash_dash_unlocked')==='1') boot();
 
 document.getElementById('savePinBtn').addEventListener('click', ()=>{
+  const cp = document.getElementById('currentPin').value;
   const np = document.getElementById('newPin').value;
   const nc = document.getElementById('newPinConfirm').value;
+  if(cp !== (localStorage.getItem('arash_pin') || '1991')){
+    toast('پین کۆدی ئێستا هەڵەیە', false); return;
+  }
   if(!np || np.length < 4){ toast('بەلایەنی کەم ٤ ژمارە بنووسە', false); return; }
   if(np !== nc){ toast('پین کۆدەکان یەک نین', false); return; }
   localStorage.setItem('arash_pin', np);
+  document.getElementById('currentPin').value = '';
   document.getElementById('newPin').value = '';
   document.getElementById('newPinConfirm').value = '';
   toast('پین کۆدی داخستنەوە گۆڕدرا ✓');
 });
 
 document.getElementById('saveAdminPinBtn').addEventListener('click', ()=>{
+  const cp = document.getElementById('currentAdminPin').value;
   const np = document.getElementById('newAdminPin').value;
   const nc = document.getElementById('newAdminPinConfirm').value;
+  if(cp !== (localStorage.getItem('arash_admin_pin') || '1881')){
+    toast('پین کۆدی ئێستا هەڵەیە', false); return;
+  }
   if(!np || np.length < 4){ toast('بەلایەنی کەم ٤ ژمارە بنووسە', false); return; }
   if(np !== nc){ toast('پین کۆدەکان یەک نین', false); return; }
   localStorage.setItem('arash_admin_pin', np);
+  document.getElementById('currentAdminPin').value = '';
   document.getElementById('newAdminPin').value = '';
   document.getElementById('newAdminPinConfirm').value = '';
   toast('پین کۆدی سڕینەوە گۆڕدرا ✓');
 });
+
 
 </script>
 </body>
