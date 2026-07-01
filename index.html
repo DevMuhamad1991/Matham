@@ -360,7 +360,16 @@ function renderCats(){
       <div class="cat-dot"></div>
     </li>
   `).join('');
+
+  // ئۆتۆماتیک هەڵبژاردنی یەکەم کەتەگۆری ئەگەر هیچ هەڵنەبژێردراوە
+  if(S.cat==='all' && CATS.length){
+    S.cat = CATS[0].cat_id;
+    renderCats(); // دووبارە ڕێندەر بکە بۆ نیشاندانی on class
+    renderMenu();
+    return;
+  }
 }
+
 
 /* ════════════════════════════════════════════════════════════════
    5. RENDER CARDS
